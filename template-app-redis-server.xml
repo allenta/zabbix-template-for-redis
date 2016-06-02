@@ -812,7 +812,7 @@
                             <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;hit_ratio&quot;]</key>
-                            <delay>30</delay>
+                            <delay>60</delay>
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
