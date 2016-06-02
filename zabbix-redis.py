@@ -23,7 +23,6 @@ ITEMS = {
         r'clients:blocked_clients|'
         r'memory:used_memory|'
         r'memory:used_memory_rss|'
-        r'memory:used_memory_peak|'
         r'memory:used_memory_lua|'
         r'memory:mem_fragmentation_ratio|'
         r'persistence:rdb_changes_since_last_save|'
@@ -203,6 +202,9 @@ def stats(location, type):
                 section = line[1:].strip().lower()
             elif section is not None and ':' in line:
                 key, value = (v.strip() for v in line.split(':', 1))
+                if section == 'commandstats' and \
+                   key.startswith('cmdstat_'):
+                    key = key[8:].upper()
                 name = '%s:%s' % (section, key)
                 if ((type == 'server' and
                      section in ('keyspace', 'commandstats')) or \
