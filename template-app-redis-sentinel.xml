@@ -30,7 +30,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},items]</key>
-                    <delay>30</delay>
+                    <delay>3600</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -349,7 +349,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},masters]</key>
-                    <delay>30</delay>
+                    <delay>3600</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
