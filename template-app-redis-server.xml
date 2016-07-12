@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>2.0</version>
-    <date>2016-06-02T13:46:51Z</date>
+    <date>2016-07-12T14:13:36Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -68,7 +68,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1547,7 +1547,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1590,7 +1590,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1719,7 +1719,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1762,7 +1762,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1805,7 +1805,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1848,7 +1848,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1891,7 +1891,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
@@ -1934,7 +1934,7 @@
                             <history>30</history>
                             <trends>365</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
                             <delta>1</delta>
