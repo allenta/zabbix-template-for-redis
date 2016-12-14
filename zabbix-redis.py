@@ -216,7 +216,7 @@ def stats(location, type):
                         if '=' in item:
                             subkey, subvalue = item.split('=', 1)
                             subvalues[subkey.strip()] = subvalue.strip()
-                    for subkey, subvalue in subvalues.iteritems():
+                    for subkey, subvalue in subvalues.items():
                         subname = None
                         if type != 'sentinel':
                             subname = '%s:%s' % (name, subkey)
@@ -300,7 +300,8 @@ def execute(command, stdin=None):
         shell=True,
         stdout=subprocess.PIPE,
         stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT)
+        stderr=subprocess.STDOUT,
+        universal_newlines=True)
     output = child.communicate(input=stdin)[0]
     return child.returncode, output
 
