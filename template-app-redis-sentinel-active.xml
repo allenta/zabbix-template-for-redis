@@ -22,7 +22,51 @@
                     <name>Redis Sentinel</name>
                 </application>
             </applications>
-            <items/>
+            <items>
+                <item>
+                    <name>Number of running processes ($1)</name>
+                    <type>7</type>
+                    <snmp_community/>
+                    <multiplier>0</multiplier>
+                    <snmp_oid/>
+                    <key>proc.num[redis-sentinel]</key>
+                    <delay>60</delay>
+                    <history>30</history>
+                    <trends>365</trends>
+                    <status>0</status>
+                    <value_type>3</value_type>
+                    <allowed_hosts/>
+                    <units/>
+                    <delta>0</delta>
+                    <snmpv3_contextname/>
+                    <snmpv3_securityname/>
+                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
+                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
+                    <snmpv3_authpassphrase/>
+                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
+                    <snmpv3_privpassphrase/>
+                    <formula>1</formula>
+                    <delay_flex/>
+                    <params/>
+                    <ipmi_sensor/>
+                    <data_type>0</data_type>
+                    <authtype>0</authtype>
+                    <username/>
+                    <password/>
+                    <publickey/>
+                    <privatekey/>
+                    <port/>
+                    <description/>
+                    <inventory_link>0</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Redis Sentinel</name>
+                        </application>
+                    </applications>
+                    <valuemap/>
+                    <logtimefmt/>
+                </item>
+            </items>
             <discovery_rules>
                 <discovery_rule>
                     <name>Items discovery</name>
@@ -230,7 +274,17 @@
                             <logtimefmt/>
                         </item_prototype>
                     </item_prototypes>
-                    <trigger_prototypes/>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template App Redis Sentinel Active:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;600</expression>
+                            <name>Redis Sentinel[{#LOCATION}] has been restarted</name>
+                            <url/>
+                            <status>1</status>
+                            <priority>4</priority>
+                            <description/>
+                            <type>0</type>
+                        </trigger_prototype>
+                    </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
                             <name>Redis Sentinel[{#LOCATION}] &gt; Masters</name>
@@ -592,7 +646,26 @@
                             <logtimefmt/>
                         </item_prototype>
                     </item_prototypes>
-                    <trigger_prototypes/>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template App Redis Sentinel Active:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:ckquorum&quot;].last()}&lt;&gt;1</expression>
+                            <name>Redis Sentinel[{#LOCATION}] {#SUBJECT} cannot reach quorum</name>
+                            <url/>
+                            <status>1</status>
+                            <priority>4</priority>
+                            <description/>
+                            <type>0</type>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{Template App Redis Sentinel Active:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:sentinels&quot;].last()}&lt;&gt;{Template App Redis Sentinel Active:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:usable_sentinels&quot;].last()}</expression>
+                            <name>Redis Sentinel[{#LOCATION}] {#SUBJECT} is not able to use all sentinels</name>
+                            <url/>
+                            <status>1</status>
+                            <priority>4</priority>
+                            <description/>
+                            <type>0</type>
+                        </trigger_prototype>
+                    </trigger_prototypes>
                     <graph_prototypes>
                         <graph_prototype>
                             <name>Redis Sentinel[{#LOCATION}] &gt; Masters[{#SUBJECT}]: quorum</name>
@@ -696,4 +769,16 @@
             <screens/>
         </template>
     </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template App Redis Sentinel Active:proc.num[redis-sentinel].last()}&lt;1</expression>
+            <name>Redis Sentinel is not running</name>
+            <url/>
+            <status>1</status>
+            <priority>5</priority>
+            <description/>
+            <type>0</type>
+            <dependencies/>
+        </trigger>
+    </triggers>
 </zabbix_export>
