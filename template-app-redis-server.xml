@@ -2102,7 +2102,7 @@
                             <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;600</expression>
                             <name>Redis Server[{#LOCATION}] has been restarted</name>
                             <url/>
-                            <status>1</status>
+                            <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
@@ -2111,7 +2111,7 @@
                             <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;replication:role&quot;].str(master)}=1 and {Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;replication:connected_slaves&quot;].last()}=0</expression>
                             <name>Redis Server[{#LOCATION}] is a master without slaves</name>
                             <url/>
-                            <status>1</status>
+                            <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
@@ -2120,7 +2120,7 @@
                             <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:evicted_keys&quot;].last()}&gt;0.0</expression>
                             <name>Redis Server[{#LOCATION}] is evicting keys</name>
                             <url/>
-                            <status>1</status>
+                            <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
@@ -3222,7 +3222,7 @@
             <expression>{Template App Redis Server:proc.num[redis-server].last()}&lt;1</expression>
             <name>Redis Server is not running</name>
             <url/>
-            <status>1</status>
+            <status>0</status>
             <priority>5</priority>
             <description/>
             <type>0</type>

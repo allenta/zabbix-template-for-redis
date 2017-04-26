@@ -279,7 +279,7 @@
                             <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;600</expression>
                             <name>Redis Sentinel[{#LOCATION}] has been restarted</name>
                             <url/>
-                            <status>1</status>
+                            <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
@@ -651,7 +651,7 @@
                             <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:ckquorum&quot;].last()}&lt;&gt;1</expression>
                             <name>Redis Sentinel[{#LOCATION}] {#SUBJECT} cannot reach quorum</name>
                             <url/>
-                            <status>1</status>
+                            <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
@@ -660,7 +660,7 @@
                             <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:sentinels&quot;].last()}&lt;&gt;{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:usable_sentinels&quot;].last()}</expression>
                             <name>Redis Sentinel[{#LOCATION}] {#SUBJECT} is not able to use all sentinels</name>
                             <url/>
-                            <status>1</status>
+                            <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
@@ -774,7 +774,7 @@
             <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].last()}&lt;1</expression>
             <name>Redis Sentinel is not running</name>
             <url/>
-            <status>1</status>
+            <status>0</status>
             <priority>5</priority>
             <description/>
             <type>0</type>
