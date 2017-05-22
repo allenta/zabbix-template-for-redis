@@ -15,6 +15,11 @@ import sys
 import time
 from argparse import ArgumentParser
 
+# redis-cli path
+redis_cli = '/usr/bin/redis-cli'
+# redis password
+redis_password = ''
+
 ITEMS = {
     'server': re.compile(
         r'^(?:'
@@ -191,9 +196,13 @@ def stats(location, type):
             opts = '-p "%s"' % location
 
     # Fetch general stats through redis-cli.
-    rc, output = execute('redis-cli %(opts)s INFO %(section)s' % {
+    rc, output = execute('%(redis_cli)s %(password)s %(opts)s INFO %(section)s' % {
         'opts': opts,
         'section': 'all' if type == 'server' else 'default',
+        'redis_cli': redis_cli,
+        'password':
+            '-a "%s"' % redis_password
+            if redis_password is not None else '',
     })
     if rc == 0:
         section = None
@@ -249,9 +258,13 @@ def stats(location, type):
 
 def stats_sentinel(opts, master_name, prefix):
     result = {}
-    rc, output = execute('redis-cli %(opts)s SENTINEL ckquorum %(name)s' % {
+    rc, output = execute('%(redis_cli)s %(password)s %(opts)s SENTINEL ckquorum %(name)s' % {
         'opts': opts,
         'name': master_name,
+        'redis_cli': redis_cli,
+        'password':
+            '-a "%s"' % redis_password
+            if redis_password is not None else '',
     })
     if rc == 0:
         # Examples:
@@ -272,8 +285,12 @@ def stats_sentinel(opts, master_name, prefix):
 
 def stats_cluster(opts):
     result = {}
-    rc, output = execute('redis-cli %(opts)s CLUSTER INFO' % {
+    rc, output = execute('%(redis_cli)s %(password)s %(opts)s CLUSTER INFO' % {
         'opts': opts,
+        'redis_cli': redis_cli,
+        'password':
+            '-a "%s"' % redis_password
+            if redis_password is not None else '',
     })
     if rc == 0:
         for line in output.splitlines():
