@@ -98,7 +98,7 @@ def send(options):
     for instance in options.redis_instances.split(','):
         instance = instance.strip()
         if instance:
-            items = stats(instance, options.redis_type)
+            items = stats(instance, options.redis_type, options.redis_password)
             for name, value in items.items():
                 row = '- redis_%(type)s.info["%(instance)s","%(key)s"] %(tst)d %(value)s\n' % {
                     'type': options.redis_type,
@@ -154,7 +154,7 @@ def discover(options):
                     '{#LOCATION_ID}': str2key(instance),
                 })
             else:
-                items = stats(instance, options.redis_type)
+                items = stats(instance, options.redis_type, options.redis_password)
                 ids = set()
                 for name in items.iterkeys():
                     match = SUBJECTS[options.redis_type][options.subject].match(name)
@@ -175,7 +175,7 @@ def discover(options):
 ## HELPERS
 ###############################################################################
 
-def stats(location, type):
+def stats(location, type, password):
     # Initializations.
     result = {}
     clustered = False
@@ -189,6 +189,10 @@ def stats(location, type):
             opts = '-h "%s" -p "%s"' % tuple(location.split(':', 1))
         else:
             opts = '-p "%s"' % location
+
+    # Use password?
+    if password is not None:
+        opts += '-a "%s"' % password
 
     # Fetch general stats through redis-cli.
     rc, output = execute('redis-cli %(opts)s INFO %(section)s' % {
@@ -322,6 +326,10 @@ def main():
         '-t', '--redis-type', dest='redis_type',
         type=str, required=True, choices=SUBJECTS.keys(),
         help='the type of the Redis instance to get stats from')
+    parser.add_argument(
+        '--redis-password', dest='redis_password',
+        type=str, default=None,
+        help='password required to access to Redis instances')
     subparsers = parser.add_subparsers(dest='command')
 
     # Set up 'send' command.
