@@ -100,7 +100,7 @@ def send(options):
         if instance:
             items = stats(instance, options.redis_type, options.redis_password)
             for name, value in items.items():
-                row = '- redis_%(type)s.info["%(instance)s","%(key)s"] %(tst)d %(value)s\n' % {
+                 row = '- \'redis_%(type)s.info["%(instance)s","%(key)s"]\' %(tst)d %(value)s\n' % {
                     'type': options.redis_type,
                     'instance': str2key(instance),
                     'key': str2key(name),
