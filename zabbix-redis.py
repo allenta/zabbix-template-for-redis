@@ -111,7 +111,7 @@ def send(options):
                 rows += row
 
     # Submit metrics.
-    rc, output = execute('zabbix_sender -T -r -i - %(config)s %(server)s %(port)s %(host)s' % {
+    cmd = 'zabbix_sender -vv -T -r -i - %(config)s %(server)s %(port)s %(host)s' % {
         'config':
             '-c "%s"' % options.zabbix_config
             if options.zabbix_config is not None else '',
@@ -124,13 +124,13 @@ def send(options):
         'host':
             '-s "%s"' % options.zabbix_host
             if options.zabbix_host is not None else '',
-    }, stdin=rows)
+    }
+    sys.stdout.write(cmd)
+    rc, output = execute(cmd, stdin=rows)
 
+    sys.stdout.write(output)
     # Check return code.
-    if rc == 0:
-        sys.stdout.write(output)
-    else:
-        sys.stderr.write(output)
+    if rc != 0:
         sys.exit(1)
 
 
