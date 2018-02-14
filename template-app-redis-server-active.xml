@@ -3189,18 +3189,6 @@
                                         <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;keyspace:{#SUBJECT_ID}:keys&quot;]</key>
                                     </item>
                                 </graph_item>
-                                <graph_item>
-                                    <sortorder>1</sortorder>
-                                    <drawtype>0</drawtype>
-                                    <color>C80000</color>
-                                    <yaxisside>0</yaxisside>
-                                    <calc_fnc>2</calc_fnc>
-                                    <type>0</type>
-                                    <item>
-                                        <host>Template App Redis Server Active</host>
-                                        <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;keyspace:{#SUBJECT_ID}:avg_ttl&quot;]</key>
-                                    </item>
-                                </graph_item>
                             </graph_items>
                         </graph_prototype>
                     </graph_prototypes>
