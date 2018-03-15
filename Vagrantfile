@@ -9,12 +9,16 @@ Vagrant.configure('2') do |config|
   config.ssh.forward_agent = true
 
   config.vm.provider :virtualbox do |vb|
+    vb.memory = 2048
+    vb.cpus = 1
+    vb.linked_clone = Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
     vb.customize [
       'modifyvm', :id,
-      '--memory', '2048',
       '--natdnshostresolver1', 'off',
       '--natdnsproxy1', 'on',
       '--accelerate3d', 'off',
+      '--audio', 'none',
+      '--paravirtprovider', 'Default',
     ]
   end
 
