@@ -1,7 +1,7 @@
 zabbix.repository:
   pkg.installed:
     - sources:
-      - zabbix-release: http://repo.zabbix.com/zabbix/2.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_2.4-1+trusty_all.deb
+      - zabbix-release: http://repo.zabbix.com/zabbix/3.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.4-1+xenial_all.deb
 
 zabbix.packages:
   pkg.installed:
@@ -100,13 +100,27 @@ zabbix.apache2-service:
       - sls: redis
 {% endfor %}
 
+zabbix.mysql-disable-auth-socket-plugin:
+  cmd.run:
+    - runas: root
+    - creates: /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
+    - name: |
+        set -e
+        mysql -uroot -e '\
+          USE mysql; \
+          UPDATE user SET plugin="mysql_native_password" WHERE user="root"; \
+          FLUSH PRIVILEGES;'
+        touch /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
+    - require:
+      - service: zabbix.mysql-service
+
 zabbix.mysql-set-root-password:
   cmd.run:
     - user: vagrant
     - unless: mysqladmin -uroot -p{{ pillar['mysql.root']['password'] }} status
     - name: mysqladmin -uroot password {{ pillar['mysql.root']['password'] }}
     - require:
-      - service: zabbix.mysql-service
+      - cmd: zabbix.mysql-disable-auth-socket-plugin
 
 zabbix.mysql-create-db:
   mysql_database.present:
@@ -114,6 +128,7 @@ zabbix.mysql-create-db:
     - connection_user: root
     - connection_pass: {{ pillar['mysql.root']['password'] }}
     - connection_charset: utf8
+    - collate: utf8_bin
     - require:
       - cmd: zabbix.mysql-set-root-password
   mysql_user.present:
@@ -135,3 +150,13 @@ zabbix.mysql-create-db:
     - connection_charset: utf8
     - require:
       - mysql_user: zabbix.mysql-create-db
+  cmd.run:
+    - runas: vagrant
+    - creates: /home/vagrant/.vagrant.zabbix.mysql-create-schema
+    - name: |
+        set -e
+        zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | \
+          mysql -u{{ pillar['mysql.zabbix']['user'] }} -p{{ pillar['mysql.zabbix']['password'] }} {{ pillar['mysql.zabbix']['name'] }}
+        touch /home/vagrant/.vagrant.zabbix.mysql-create-schema
+    - require:
+      - mysql_grants: zabbix.mysql-create-db
