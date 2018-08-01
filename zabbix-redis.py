@@ -192,7 +192,7 @@ def stats(location, type, password):
 
     # Use password?
     if password is not None:
-        opts += '-a "%s"' % password
+        opts += ' -a "%s"' % password
 
     # Fetch general stats through redis-cli.
     rc, output = execute('redis-cli %(opts)s INFO %(section)s' % {
