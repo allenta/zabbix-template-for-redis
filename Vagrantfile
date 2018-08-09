@@ -50,7 +50,7 @@ Vagrant.configure('2') do |config|
       salt.log_level = 'info'
       salt.colorize = true
       salt.install_type = 'git'
-      salt.install_args = 'v2016.3.0'
+      salt.install_args = 'v2018.3.2'
     end
 
     machine.vm.network :public_network
