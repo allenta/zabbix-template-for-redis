@@ -13,7 +13,7 @@ redis.gem:
 
 redis.download-and-install:
   cmd.run:
-    - user: vagrant
+    - runas: vagrant
     - creates: /home/vagrant/.vagrant.redis.download-and-install
     - name: |
         set -e
@@ -34,7 +34,7 @@ redis.download-and-install:
 
 redis.create-instances:
   cmd.run:
-    - user: root
+    - runas: root
     - creates: /home/vagrant/.vagrant.redis.create-instances
     - name: |
         set -e
@@ -66,7 +66,7 @@ redis.create-instances:
 
 redis.set-up-standalone-instances:
   cmd.run:
-    - user: root
+    - runas: root
     - creates: /home/vagrant/.vagrant.redis.set-up-standalone-instances
     - name: |
         set -e
@@ -106,7 +106,7 @@ redis.set-up-standalone-instances:
 
 redis.set-up-clustered-instances:
   cmd.run:
-    - user: root
+    - runas: root
     - creates: /home/vagrant/.vagrant.redis.set-up-clustered-instances
     - name: |
         set -e

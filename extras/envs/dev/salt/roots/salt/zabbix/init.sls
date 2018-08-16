@@ -116,7 +116,7 @@ zabbix.mysql-disable-auth-socket-plugin:
 
 zabbix.mysql-set-root-password:
   cmd.run:
-    - user: vagrant
+    - runas: vagrant
     - unless: mysqladmin -uroot -p{{ pillar['mysql.root']['password'] }} status
     - name: mysqladmin -uroot password {{ pillar['mysql.root']['password'] }}
     - require:
