@@ -10,6 +10,7 @@
     redis_sentinel_ports: [26379, 26380, 26381]
 
 - name: Download and install Redis
+  become_user: vagrant
   shell: |
     set -e
 
@@ -29,7 +30,6 @@
 
 - name: Add Redis Server instances
   loop: '{{ redis_clustered_ports + redis_standalone_ports }}'
-  become_user: vagrant
   shell: |
     set -e
     mkdir -p /etc/redis /var/lib/redis
@@ -93,7 +93,6 @@
 - name: Add & Configure Redis Sentinel instances
   notify: restart-redis-sentinel
   loop: '{{ redis_sentinel_ports }}'
-  become_user: vagrant
   shell:
     cmd: |
       set -e
