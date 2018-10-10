@@ -89,7 +89,6 @@
         creates: /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
 
     - name: Set MySQL root password
-      become_user: vagrant
       shell: |
         set -e
         mysqladmin -uroot password "{{ settings['mysql.root'].password }}"
@@ -97,7 +96,7 @@
       args:
         creates: /home/vagrant/.vagrant.zabbix.mysql-set-root-password
 
-    - name: Create MySQL Zabbix BD
+    - name: Create MySQL Zabbix DB
       mysql_db:
         name: "{{ settings['mysql.zabbix'].name }}"
         collation: utf8_bin

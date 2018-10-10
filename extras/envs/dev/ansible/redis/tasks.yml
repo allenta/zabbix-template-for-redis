@@ -4,18 +4,17 @@
     value: 1
 
 - set_fact:
-    version: 4.0.11
+    redis_version: 4.0.11
     redis_clustered_ports: [7000, 7001, 7002, 7003, 7004, 7005]
     redis_standalone_ports: [6379, 6380, 6381]
     redis_sentinel_ports: [26379, 26380, 26381]
 
 - name: Download and install Redis
-  notify: restart-redis
   shell: |
     set -e
 
     cd /home/vagrant
-    wget http://download.redis.io/releases/redis-{{ version }}.tar.gz
+    wget http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
     tar zxvf redis-*.tar.gz
     rm -f redis-*.tar.gz
     cd redis-*
@@ -29,8 +28,8 @@
     creates: /home/vagrant/.vagrant.redis.download-and-install
 
 - name: Add Redis Server instances
-  notify: restart-redis
   loop: '{{ redis_clustered_ports + redis_standalone_ports }}'
+  become_user: vagrant
   shell: |
     set -e
     mkdir -p /etc/redis /var/lib/redis
@@ -56,7 +55,7 @@
         loop_var: port
       vars:
         options:
-          - { name: dir, value: '/var/lib/redis' }
+          - { name: dir, value: /var/lib/redis }
           - { name: daemonize, value: 'yes' }
           - { name: pidfile, value: '/var/run/redis-{{ port }}' }
           - { name: dbfilename, value: 'dump-{{ port }}' }
@@ -91,10 +90,10 @@
     set -e
     service redis-server-{{ item }} start
 
-
 - name: Add & Configure Redis Sentinel instances
   notify: restart-redis-sentinel
   loop: '{{ redis_sentinel_ports }}'
+  become_user: vagrant
   shell:
     cmd: |
       set -e
