@@ -1,0 +1,17 @@
+- name: Restart Zabbix Server service
+  listen: restart-zabbix-server
+  service:
+    name: zabbix-server
+    state: restarted
+
+- name: Restart Zabbix Agent service
+  listen: restart-zabbix-agent
+  service:
+    name: zabbix-agent
+    state: restarted
+
+- name: Restart Apache service
+  listen: restart-apache2
+  service:
+    name: apache2
+    state: restarted

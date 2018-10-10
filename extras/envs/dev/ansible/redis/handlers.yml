@@ -1,0 +1,15 @@
+- name: Restart Redis Server services
+  listen: restart-redis
+  loop: '{{ redis_clustered_ports + redis_standalone_ports }}'
+  shell: |
+    set -e
+    service redis-server-{{ item }} stop
+    service redis-server-{{ item }} start
+
+- name: Restart Redis Sentinel services
+  listen: restart-redis-sentinel
+  loop: '{{ redis_sentinel_ports }}'
+  shell: |
+    set -e
+    service redis-sentinel-{{ item }} stop
+    service redis-sentinel-{{ item }} start

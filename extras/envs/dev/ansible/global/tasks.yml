@@ -1,0 +1,14 @@
+- name: Install packages
+  apt:
+    name:
+      - curl
+      - links
+      - nano
+      - python-mysqldb
+      - ruby
+      - tmux
+
+- name: Set timezone
+  timezone:
+    name: Europe/Madrid
+    hwclock: UTC
