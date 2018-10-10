@@ -1,5 +1,3 @@
-
-
 - name: Configure color prompt
   replace:
     dest: /home/vagrant/.bashrc

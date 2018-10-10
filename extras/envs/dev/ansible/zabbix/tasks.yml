@@ -25,6 +25,54 @@
     enabled: yes
     state: started
 
+- name: Configure MySQL
+  block:
+    - name: Disable MySQL auth socket plugin
+      shell: |
+        set -e
+        mysql -uroot -e '\
+          USE mysql; \
+          UPDATE user SET plugin="mysql_native_password" WHERE user="root"; \
+          FLUSH PRIVILEGES;'
+        touch /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
+      args:
+        creates: /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
+
+    - name: Set MySQL root password
+      shell: |
+        set -e
+        mysqladmin -uroot password "{{ settings['mysql.root'].password }}"
+        touch /home/vagrant/.vagrant.zabbix.mysql-set-root-password
+      args:
+        creates: /home/vagrant/.vagrant.zabbix.mysql-set-root-password
+
+    - name: Create MySQL Zabbix DB
+      mysql_db:
+        name: "{{ settings['mysql.zabbix'].name }}"
+        collation: utf8_bin
+        login_user: root
+        login_password: "{{ settings['mysql.root'].password }}"
+
+    - name: Create Zabbix MySQL user
+      mysql_user:
+        name: "{{ settings['mysql.zabbix'].user }}"
+        password: "{{ settings['mysql.zabbix'].password }}"
+        login_user: root
+        login_password: "{{ settings['mysql.root'].password }}"
+        priv: "{{ settings['mysql.zabbix'].name }}.*:ALL"
+
+    - name: Import Zabbix MySQL schema
+      become_user: vagrant
+      shell: |
+        set -e
+        zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | mysql \
+          -u{{ settings['mysql.zabbix'].user }} \
+          -p{{ settings['mysql.zabbix'].password }} \
+          {{ settings['mysql.zabbix'].name }}
+        touch /home/vagrant/.vagrant.zabbix.mysql-create-schema
+      args:
+        creates: /home/vagrant/.vagrant.zabbix.mysql-create-schema
+
 - name: Configure Zabbix Frontend timezone (PHP)
   notify: restart-apache2
   replace:
@@ -74,51 +122,3 @@
     name: zabbix-agent
     enabled: yes
     state: started
-
-- name: Configure MySQL
-  block:
-    - name: Disable MySQL auth socket plugin
-      shell: |
-        set -e
-        mysql -uroot -e '\
-          USE mysql; \
-          UPDATE user SET plugin="mysql_native_password" WHERE user="root"; \
-          FLUSH PRIVILEGES;'
-        touch /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
-      args:
-        creates: /home/vagrant/.vagrant.zabbix.mysql-disable-auth-socket-plugin
-
-    - name: Set MySQL root password
-      shell: |
-        set -e
-        mysqladmin -uroot password "{{ settings['mysql.root'].password }}"
-        touch /home/vagrant/.vagrant.zabbix.mysql-set-root-password
-      args:
-        creates: /home/vagrant/.vagrant.zabbix.mysql-set-root-password
-
-    - name: Create MySQL Zabbix DB
-      mysql_db:
-        name: "{{ settings['mysql.zabbix'].name }}"
-        collation: utf8_bin
-        login_user: root
-        login_password: "{{ settings['mysql.root'].password }}"
-
-    - name: Create Zabbix MySQL user
-      mysql_user:
-        name: "{{ settings['mysql.zabbix'].user }}"
-        password: "{{ settings['mysql.zabbix'].password }}"
-        login_user: root
-        login_password: "{{ settings['mysql.root'].password }}"
-        priv: "{{ settings['mysql.zabbix'].name }}.*:ALL"
-
-    - name: Import Zabbix MySQL schema
-      become_user: vagrant
-      shell: |
-        set -e
-        zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | mysql \
-          -u{{ settings['mysql.zabbix'].user }} \
-          -p{{ settings['mysql.zabbix'].password }} \
-          {{ settings['mysql.zabbix'].name }}
-        touch /home/vagrant/.vagrant.zabbix.mysql-create-schema
-      args:
-        creates: /home/vagrant/.vagrant.zabbix.mysql-create-schema
