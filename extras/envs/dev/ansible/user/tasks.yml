@@ -1,0 +1,19 @@
+- name: Configure color prompt
+  replace:
+    dest: /home/vagrant/.bashrc
+    regexp: '#force_color_prompt=yes'
+    replace: force_color_prompt=yes
+
+- name: Configure Zabbix Sender
+  block:
+    - name: Configure Server cron
+      cron:
+        name: Zabbix Sender Server cron
+        user: zabbix
+        job: PATH=$PATH:/usr/local/bin /vagrant/zabbix-redis.py -i '{{ (redis_clustered_ports + redis_standalone_ports)|join(', ') }}' -t server send -c /etc/zabbix/zabbix_agentd.conf -s dev > /dev/null 2>&1
+
+    - name: Configure Sentinel cron
+      cron:
+        name: Zabbix Sender Sentinel cron
+        user: zabbix
+        job: PATH=$PATH:/usr/local/bin /vagrant/zabbix-redis.py -i '{{ redis_sentinel_ports|join(', ') }}' -t sentinel send -c /etc/zabbix/zabbix_agentd.conf -s dev > /dev/null 2>&1

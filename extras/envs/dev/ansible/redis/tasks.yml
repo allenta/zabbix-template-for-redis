@@ -1,0 +1,153 @@
+- name: Enable memory overcommit
+  sysctl:
+    name: vm.overcommit_memory
+    value: 1
+
+- set_fact:
+    redis_version: 4.0.11
+    redis_clustered_ports: [7000, 7001, 7002, 7003, 7004, 7005]
+    redis_standalone_ports: [6379, 6380, 6381]
+    redis_sentinel_ports: [26379, 26380, 26381]
+
+- name: Download and install Redis
+  become_user: vagrant
+  shell: |
+    set -e
+
+    cd /home/vagrant
+    wget http://download.redis.io/releases/redis-{{ redis_version }}.tar.gz
+    tar zxvf redis-*.tar.gz
+    rm -f redis-*.tar.gz
+    cd redis-*
+    make
+    sudo make PREFIX="/usr/local" install
+    sudo ldconfig
+    sudo cp src/redis-trib.rb /usr/local/bin
+
+    touch /home/vagrant/.vagrant.redis.download-and-install
+  args:
+    creates: /home/vagrant/.vagrant.redis.download-and-install
+
+- name: Add Redis Server instances
+  loop: '{{ redis_clustered_ports + redis_standalone_ports }}'
+  shell: |
+    set -e
+    mkdir -p /etc/redis /var/lib/redis
+    cp /home/vagrant/redis*/utils/redis_init_script /etc/init.d/redis-server-{{ item }}
+    sed /etc/init.d/redis-server-{{ item }} -i \
+      -e "s%^# Provides:\s*redis_.*%# Provides: redis_{{ item }}%" \
+      -e "s%^REDISPORT=.*%REDISPORT={{ item }}%" \
+      -e "s%^PIDFILE=/var/run/redis_%PIDFILE=/var/run/redis-%"
+    chmod +x /etc/init.d/redis-server-{{ item }}
+    update-rc.d -f redis-server-{{ item }} defaults
+    cat /home/vagrant/redis*/redis.conf | sed \
+      -e 's%6379%{{ item }}%g' >  /etc/redis/{{ item }}.conf
+    touch /home/vagrant/.vagrant.redis.{{ item }}.add-instance
+  args:
+    creates: /home/vagrant/.vagrant.redis.{{ item }}.add-instance
+
+- name: Configure Redis Server instances
+  block:
+    - name: Configure Redis Server instances
+      include_tasks: server-configuration.yml
+      loop: '{{ redis_clustered_ports + redis_standalone_ports }}'
+      loop_control:
+        loop_var: port
+      vars:
+        options:
+          - { name: dir, value: /var/lib/redis }
+          - { name: daemonize, value: 'yes' }
+          - { name: pidfile, value: '/var/run/redis-{{ port }}' }
+          - { name: dbfilename, value: 'dump-{{ port }}' }
+          - { name: appendfilename, value: 'appendonly-{{ port }}' }
+          - { name: logfile, value: '/var/log/redis-{{ port }}' }
+          - { name: protected-mode, value: 'no' }
+
+    - name: Configure clustered Redis Server instances
+      include_tasks: server-configuration.yml
+      loop: '{{ redis_clustered_ports }}'
+      loop_control:
+        loop_var: port
+      vars:
+        options:
+          - { name: cluster-enabled, value: 'yes'}
+          - { name: cluster-config-file, value: 'redis-{{ port }}.conf' }
+          - { name: cluster-node-timeout, value: 5000 }
+          - { name: appendonly, value: 'yes' }
+
+    - name: Configure slave Redis Server instances
+      include_tasks: server-configuration.yml
+      loop: '{{ redis_standalone_ports[1:] }}'
+      loop_control:
+        loop_var: port
+      vars:
+        options:
+          - { name: slaveof, value: '127.0.0.1 {{ redis_standalone_ports[0] }}' }
+
+- name: Start Redis Server services
+  loop: '{{ redis_clustered_ports + redis_standalone_ports }}'
+  shell: |
+    set -e
+    service redis-server-{{ item }} start
+
+- name: Add & Configure Redis Sentinel instances
+  notify: restart-redis-sentinel
+  loop: '{{ redis_sentinel_ports }}'
+  shell:
+    cmd: |
+      set -e
+      cp /home/vagrant/redis*/utils/redis_init_script /etc/init.d/redis-sentinel-{{ item }}
+      sed /etc/init.d/redis-sentinel-{{ item }} -i \
+        -e "s%^# Provides:\s*redis_.*%# Provides: redis_{{ item }}%" \
+        -e "s%^\(EXEC=.*\)/redis-server%\1/redis-sentinel%" \
+        -e "s%^REDISPORT=.*%REDISPORT={{ item }}%" \
+        -e "s%^PIDFILE=/var/run/redis_%PIDFILE=/var/run/redis-%"
+      chmod +x /etc/init.d/redis-sentinel-{{ item }}
+      update-rc.d -f redis-sentinel-{{ item }} defaults
+
+      cat > /etc/redis/{{ item }}.conf << EOF
+      port {{ item }}
+      dir /var/lib/redis
+      daemonize yes
+      pidfile /var/run/redis-{{ item }}.pid
+      logfile /var/log/redis-{{ item }}.log
+      sentinel monitor mymaster 127.0.0.1 {{ redis_standalone_ports[0] }} 1
+      sentinel down-after-milliseconds mymaster 5000
+      sentinel failover-timeout mymaster 60000
+      sentinel parallel-syncs mymaster 1
+      EOF
+      touch /home/vagrant/.vagrant.redis.sentinel-{{ item }}.add-instance
+  args:
+    creates: /home/vagrant/.vagrant.redis.sentinel-{{ item }}.add-instance
+
+- name: Start Redis Sentinel services
+  loop: '{{ redis_sentinel_ports }}'
+  shell: |
+    set -e
+    service redis-sentinel-{{ item }} start
+
+- name: Install Redis gem
+  gem:
+    name: redis
+    version: 3.3.0
+    user_install: no
+
+- name: Create Redis Cluster
+  block:
+    - name: Restart Redis Server services if needed
+      meta: flush_handlers
+
+    - name: Wait for clustered Redis Server services to boot
+      loop: '{{ redis_clustered_ports }}'
+      wait_for:
+        port: '{{ item }}'
+
+    - name: Create Redis Cluster
+      shell: |
+        yes yes | redis-trib.rb create --replicas 1 \
+          {%- for port in redis_clustered_ports %}
+            127.0.0.1:{{ port }} \
+          {%- endfor %}
+        && touch /home/vagrant/.vagrant.redis.create-cluster
+      args:
+        creates: /home/vagrant/.vagrant.redis.create-cluster

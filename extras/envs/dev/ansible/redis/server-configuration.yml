@@ -1,0 +1,7 @@
+- name: Configure Redis Server instance at :{{ port }}
+  notify: restart-redis
+  loop: '{{ options }}'
+  lineinfile:
+    path: /etc/redis/{{ port }}.conf
+    regexp: ^\s*{{ item.name }}\s
+    line: '{{ item.name }} {{ item.value }}'

@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - import_tasks: global/tasks.yml
+    - import_tasks: redis/tasks.yml
+    - import_tasks: zabbix/tasks.yml
+    - import_tasks: user/tasks.yml
+  handlers:
+    - import_tasks: redis/handlers.yml
+    - import_tasks: zabbix/handlers.yml

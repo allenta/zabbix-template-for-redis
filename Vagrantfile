@@ -33,30 +33,29 @@ Vagrant.configure('2') do |config|
       ]
     end
 
-    machine.vm.provision :salt do |salt|
-      salt.pillar({
-        'mysql.root' => {
-          'password' => 's3cr3t',
-        },
-        'mysql.zabbix' => {
-          'name' => 'zabbix',
-          'user' => 'zabbix',
-          'password' => 'zabbix',
-        },
-      })
-      salt.minion_config = 'extras/envs/dev/salt/minion'
-      salt.run_highstate = true
-      salt.verbose = true
-      salt.log_level = 'info'
-      salt.colorize = true
-      salt.install_type = 'git'
-      salt.install_args = 'v2018.3.2'
-    end
+    machine.vm.synced_folder 'extras/envs/dev/ansible', '/srv/ansible', :nfs => false
+    machine.vm.provision 'ansible', type: 'ansible_local' do |ansible|
+      ansible.playbook = '/srv/ansible/playbook.yml'
+      ansible.verbose = 'v'
+      ansible.extra_vars = {
+        'settings' => {
+          'mysql.root' => {
+            'password' => 's3cr3t',
+          },
+          'mysql.zabbix' => {
+            'name' => 'zabbix',
+            'user' => 'zabbix',
+            'password' => 'zabbix',
+          },
+        }
+      }
+      ansible.install_mode = 'pip'
+      ansible.version = '2.6.4'
+     end
 
     machine.vm.network :public_network
     machine.vm.network :private_network, ip: '192.168.100.173'
 
     machine.vm.synced_folder '.', '/vagrant', :nfs => false
-    machine.vm.synced_folder 'extras/envs/dev/salt/roots', '/srv', :nfs => false
   end
 end

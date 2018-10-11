@@ -4,9 +4,9 @@ global $DB;
 $DB['TYPE']     = 'MYSQL';
 $DB['SERVER']   = '127.0.0.1';
 $DB['PORT']     = '0';
-$DB['DATABASE'] = '{{ db_name }}';
-$DB['USER']     = '{{ db_user }}';
-$DB['PASSWORD'] = '{{ db_password }}';
+$DB['DATABASE'] = '{{ settings['mysql.zabbix'].name }}';
+$DB['USER']     = '{{ settings['mysql.zabbix'].user }}';
+$DB['PASSWORD'] = '{{ settings['mysql.zabbix'].password }}';
 
 $DB['SCHEMA'] = '';
 
