@@ -15,7 +15,8 @@
 4. Import the required templates (``template-app-redis-server.xml`` and / or ``template-app-redis-sentinel.xml`` files).
 
 5. Add an existing / new host to the ``Redis servers`` group and link it to the right template (``Template App Redis Server`` for Redis Server and ``Template App Redis Sentinel`` for Redis Sentinel). Beware depending on the used template you must set a value for the ``{$REDIS_SERVER_LOCATIONS}`` or ``{$REDIS_SENTINEL_LOCATIONS}`` macro (comma-delimited list of Redis instances; ``port``, ``host:port`` and ``unix:///path/to/socket`` formats are allowed). There are defined macros for ``Template App Redis Server`` and ``Template App Redis Sentinel``.
-For ``Template App Redis Server``:
+
+   For ``Template App Redis Server``:
 
    * ``{$REDIS_SERVER_EVICTED_KEYS_ALLOWED}``
    * ``{$REDIS_SERVER_HISTORY_STORAGE_PERIOD}``
