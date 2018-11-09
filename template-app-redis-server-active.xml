@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>2.0</version>
-    <date>2016-07-12T14:13:36Z</date>
+    <version>3.4</version>
+    <date>2018-10-29T09:52:03Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -27,17 +27,15 @@
                     <name>Number of running processes ($1)</name>
                     <type>7</type>
                     <snmp_community/>
-                    <multiplier>0</multiplier>
                     <snmp_oid/>
                     <key>proc.num[redis-server]</key>
-                    <delay>60</delay>
-                    <history>30</history>
-                    <trends>365</trends>
+                    <delay>{$REDIS_SERVER_UPDATE_INTERVAL_ITEM:proc.num_redis-server}</delay>
+                    <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:proc.num_redis-server}</history>
+                    <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:proc.num_redis-server}</trends>
                     <status>0</status>
                     <value_type>3</value_type>
                     <allowed_hosts/>
                     <units/>
-                    <delta>0</delta>
                     <snmpv3_contextname/>
                     <snmpv3_securityname/>
                     <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -45,11 +43,8 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <formula>1</formula>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
-                    <data_type>0</data_type>
                     <authtype>0</authtype>
                     <username/>
                     <password/>
@@ -65,6 +60,9 @@
                     </applications>
                     <valuemap/>
                     <logtimefmt/>
+                    <preprocessing/>
+                    <jmx_endpoint/>
+                    <master_item/>
                 </item>
             </items>
             <discovery_rules>
@@ -74,7 +72,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},commandstats]</key>
-                    <delay>3600</delay>
+                    <delay>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY:commandstats}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -84,7 +82,6 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
                     <authtype>0</authtype>
@@ -98,24 +95,22 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30</lifetime>
+                    <lifetime>{$REDIS_SERVER_KEEP_LOST_RESOURCES_PERIOD:commandstats}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - commandstats:{#SUBJECT}:calls</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;commandstats:{#SUBJECT}:calls&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:commandstats_calls}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:commandstats_calls}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -123,11 +118,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -143,22 +135,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - commandstats:{#SUBJECT}:usec_per_call</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;commandstats:{#SUBJECT}:usec_per_call&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:commandstats_user_per_call}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:commandstats_user_per_call}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -166,11 +165,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -186,6 +182,10 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes/>
@@ -256,6 +256,7 @@
                         </graph_prototype>
                     </graph_prototypes>
                     <host_prototypes/>
+                    <jmx_endpoint/>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Items discovery</name>
@@ -263,7 +264,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},items]</key>
-                    <delay>3600</delay>
+                    <delay>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY:items}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -273,7 +274,6 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
                     <authtype>0</authtype>
@@ -287,24 +287,22 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30</lifetime>
+                    <lifetime>{$REDIS_SERVER_KEEP_LOST_RESOURCES_PERIOD:items}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - clients:blocked_clients</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;clients:blocked_clients&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:clients-blocked_clients}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:clients-blocked_clients}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -312,11 +310,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -332,22 +327,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - clients:connected_clients</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;clients:connected_clients&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:clients-connected_clients}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:clients-connected_clients}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -355,11 +352,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -375,22 +369,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_known_nodes</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_known_nodes&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_known_nodes}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cluster-cluster_known_nodes}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -398,11 +394,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -418,22 +411,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_size</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_size&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_size}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cluster-cluster_size}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -441,11 +436,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -461,22 +453,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_slots_assigned</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_slots_assigned&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_slots_assigned}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cluster-cluster_slots_assigned}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -484,11 +478,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -504,22 +495,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_slots_fail</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_slots_fail&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_slots_fail}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cluster-cluster_slots_fail}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -527,11 +520,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -547,22 +537,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_slots_ok</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_slots_ok&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_slots_ok}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cluster-cluster_slots_ok}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -570,11 +562,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -590,22 +579,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_slots_pfail</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_slots_pfail&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_slots_pfail}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cluster-cluster_slots_pfail}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -613,11 +604,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -633,22 +621,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cluster:cluster_state</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cluster:cluster_state&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_state}</history>
+                            <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -656,11 +646,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -676,22 +663,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cpu:used_cpu_sys</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cpu:used_cpu_sys&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cpu-used_cpu_sys}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cpu-used_cpu_sys}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -699,11 +688,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -719,22 +705,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cpu:used_cpu_sys_children</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cpu:used_cpu_sys_children&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cpu-used_cpu_sys_children}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cpu-used_cpu_sys_children}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -742,11 +735,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -762,22 +752,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cpu:used_cpu_user</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cpu:used_cpu_user&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cpu-used_cpu_user}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cpu-used_cpu_user}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -785,11 +782,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -805,22 +799,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - cpu:used_cpu_user_children</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;cpu:used_cpu_user_children&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cpu-used_cpu_user_children}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:cpu-used_cpu_user_children}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -828,11 +829,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -848,22 +846,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - hit_ratio</name>
                             <type>15</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;hit_ratio&quot;]</key>
-                            <delay>60</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <delay>{$REDIS_SERVER_UPDATE_INTERVAL_ITEM:hit_ratio}</delay>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:hit_ratio}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:hit_ratio}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>%</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -871,11 +876,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params>100*last(&quot;redis_server.info[\&quot;{#LOCATION_ID}\&quot;,\&quot;stats:keyspace_hits\&quot;]&quot;)/(last(&quot;redis_server.info[\&quot;{#LOCATION_ID}\&quot;,\&quot;stats:keyspace_hits\&quot;]&quot;)+last(&quot;redis_server.info[\&quot;{#LOCATION_ID}\&quot;,\&quot;stats:keyspace_misses\&quot;]&quot;))</params>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -891,22 +893,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - memory:mem_fragmentation_ratio</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;memory:mem_fragmentation_ratio&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:memory-mem_fragmentation_ratio}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:memory-mem_fragmentation_ratio}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -914,11 +918,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -934,22 +935,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - memory:used_memory</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;memory:used_memory&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:memory-used_memory}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:memory-used_memory}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>B</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -957,11 +960,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -977,22 +977,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - memory:used_memory_lua</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;memory:used_memory_lua&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:memory-used_memory_lua}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:memory-used_memory_lua}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>B</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1000,11 +1002,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1020,22 +1019,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - memory:used_memory_rss</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;memory:used_memory_rss&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:memory-used_memory_rss}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:memory-used_memory_rss}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>B</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1043,11 +1044,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1063,22 +1061,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:aof_last_bgrewrite_status</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:aof_last_bgrewrite_status&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-aof_last_bgrewrite_status}</history>
+                            <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1086,11 +1086,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1106,22 +1103,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:aof_last_rewrite_time_sec</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:aof_last_rewrite_time_sec&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-aof_last_rewrite_time_sec}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:persistence-aof_last_rewrite_time_sec}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1129,11 +1128,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1149,22 +1145,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:aof_last_write_status</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:aof_last_write_status&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-aof_last_write_status}</history>
+                            <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1172,11 +1170,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1192,22 +1187,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:rdb_changes_since_last_save</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:rdb_changes_since_last_save&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-rdb_changes_since_last_save}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:persistence-rdb_changes_since_last_save}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1215,11 +1212,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1235,22 +1229,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:rdb_last_bgsave_status</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:rdb_last_bgsave_status&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-rdb_last_bgsave_status}</history>
+                            <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1258,11 +1254,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1278,22 +1271,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:rdb_last_bgsave_time_sec</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:rdb_last_bgsave_time_sec&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-rdb_last_bgsave_time_sec}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:persistence-rdb_last_bgsave_time_sec}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1301,11 +1296,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1321,22 +1313,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - persistence:rdb_last_save_time</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;persistence:rdb_last_save_time&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:persistence-rdb_last_save_time}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:persistence-rdb_last_save_time}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>unixtime</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1344,11 +1338,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1364,22 +1355,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - replication:connected_slaves</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;replication:connected_slaves&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:replication-connected_slaves}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:replication-connected_slaves}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1387,11 +1380,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1407,22 +1397,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - replication:role</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;replication:role&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:replication-role}</history>
+                            <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1430,11 +1422,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1450,22 +1439,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - server:uptime_in_seconds</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:server-uptime_in_seconds}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:server-uptime_in_seconds}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>uptime</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1473,11 +1464,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1493,22 +1481,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:evicted_keys</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:evicted_keys&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-evicted_keys}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-evicted_keys}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1516,11 +1506,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1536,22 +1523,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:expired_keys</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:expired_keys&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-expired_keys}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-expired_keys}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1559,11 +1553,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1579,22 +1570,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:keyspace_hits</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:keyspace_hits&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-keyspace_hits}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-keyspace_hits}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1602,11 +1600,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1622,22 +1617,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:keyspace_misses</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:keyspace_misses&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-keyspace_misses}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-keyspace_misses}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1645,11 +1647,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1665,22 +1664,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:pubsub_channels</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:pubsub_channels&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-pubsub_channels}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-pubsub_channels}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1688,11 +1694,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1708,22 +1711,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:pubsub_patterns</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:pubsub_patterns&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-pubsub_patterns}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-pubsub_patterns}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1731,11 +1736,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1751,22 +1753,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:rejected_connections</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:rejected_connections&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-rejected_connections}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-rejected_connections}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1774,11 +1778,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1794,22 +1795,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:sync_full</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:sync_full&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-sync_full}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-sync_full}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1817,11 +1825,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1837,22 +1842,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:sync_partial_err</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:sync_partial_err&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-sync_partial_err}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-sync_partial_err}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1860,11 +1872,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1880,22 +1889,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:sync_partial_ok</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:sync_partial_ok&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-sync_partial_ok}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-sync_partial_ok}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1903,11 +1919,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1923,22 +1936,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:total_commands_processed</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:total_commands_processed&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-total_commands_processed}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-total_commands_processed}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1946,11 +1966,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -1966,22 +1983,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:total_connections_received</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:total_connections_received&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-total_connections_received}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-total_connections_received}</trends>
                             <status>0</status>
                             <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>eps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -1989,11 +2013,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -2009,22 +2030,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:total_net_input_bytes</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:total_net_input_bytes&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-total_net_input_bytes}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-total_net_input_bytes}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>Bps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -2032,11 +2060,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -2052,22 +2077,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - stats:total_net_output_bytes</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:total_net_output_bytes&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats-total_net_output_bytes}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:stats-total_net_output_bytes}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>Bps</units>
-                            <delta>1</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -2075,11 +2107,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -2095,35 +2124,65 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>10</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Template App Redis Server Active:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;600</expression>
+                            <expression>{Template App Redis Server Active:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;{$REDIS_SERVER_MIN_UPTIME_AFTER_RESTART}</expression>
+                            <recovery_mode>0</recovery_mode>
+                            <recovery_expression/>
                             <name>Redis Server[{#LOCATION}] has been restarted</name>
+                            <correlation_mode>0</correlation_mode>
+                            <correlation_tag/>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
+                            <manual_close>0</manual_close>
+                            <dependencies/>
+                            <tags/>
                         </trigger_prototype>
                         <trigger_prototype>
                             <expression>{Template App Redis Server Active:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;replication:role&quot;].str(master)}=1 and {Template App Redis Server Active:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;replication:connected_slaves&quot;].last()}=0</expression>
+                            <recovery_mode>0</recovery_mode>
+                            <recovery_expression/>
                             <name>Redis Server[{#LOCATION}] is a master without slaves</name>
+                            <correlation_mode>0</correlation_mode>
+                            <correlation_tag/>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
+                            <manual_close>0</manual_close>
+                            <dependencies/>
+                            <tags/>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template App Redis Server Active:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:evicted_keys&quot;].last()}&gt;0.0</expression>
+                            <expression>{Template App Redis Server Active:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:evicted_keys&quot;].last()}&gt;{$REDIS_SERVER_EVICTED_KEYS_ALLOWED}</expression>
+                            <recovery_mode>0</recovery_mode>
+                            <recovery_expression/>
                             <name>Redis Server[{#LOCATION}] is evicting keys</name>
+                            <correlation_mode>0</correlation_mode>
+                            <correlation_tag/>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
+                            <manual_close>0</manual_close>
+                            <dependencies/>
+                            <tags/>
                         </trigger_prototype>
                     </trigger_prototypes>
                     <graph_prototypes>
@@ -2961,6 +3020,7 @@
                         </graph_prototype>
                     </graph_prototypes>
                     <host_prototypes/>
+                    <jmx_endpoint/>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Keyspace discovery</name>
@@ -2968,7 +3028,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},keyspace]</key>
-                    <delay>3600</delay>
+                    <delay>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY:keyspace}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -2978,7 +3038,6 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
                     <authtype>0</authtype>
@@ -2992,24 +3051,22 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30</lifetime>
+                    <lifetime>{$REDIS_SERVER_KEEP_LOST_RESOURCES_PERIOD:keyspace}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - keyspace:{#SUBJECT}:avg_ttl</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;keyspace:{#SUBJECT_ID}:avg_ttl&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:keyspace_avg_ttl}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:keyspace_avg_ttl}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -3017,11 +3074,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -3037,22 +3091,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - keyspace:{#SUBJECT}:expires</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;keyspace:{#SUBJECT_ID}:expires&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:keyspace_expires}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:keyspace_expires}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -3060,11 +3116,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -3080,22 +3133,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Server[{#LOCATION}] - keyspace:{#SUBJECT}:keys</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;keyspace:{#SUBJECT_ID}:keys&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:keyspace_keys}</history>
+                            <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:keyspace_keys}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -3103,11 +3158,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -3123,6 +3175,10 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes/>
@@ -3193,12 +3249,46 @@
                         </graph_prototype>
                     </graph_prototypes>
                     <host_prototypes/>
+                    <jmx_endpoint/>
                 </discovery_rule>
             </discovery_rules>
+            <httptests/>
             <macros>
+                <macro>
+                    <macro>{$REDIS_SERVER_EVICTED_KEYS_ALLOWED}</macro>
+                    <value>0.0</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD}</macro>
+                    <value>30d</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_INSTANCES}</macro>
+                    <value>1</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_KEEP_LOST_RESOURCES_PERIOD}</macro>
+                    <value>30d</value>
+                </macro>
                 <macro>
                     <macro>{$REDIS_SERVER_LOCATIONS}</macro>
                     <value/>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_MIN_UPTIME_AFTER_RESTART}</macro>
+                    <value>600</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_TREND_STORAGE_PERIOD}</macro>
+                    <value>365d</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY}</macro>
+                    <value>3600</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SERVER_UPDATE_INTERVAL_ITEM}</macro>
+                    <value>60</value>
                 </macro>
             </macros>
             <templates/>
@@ -3207,14 +3297,20 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App Redis Server Active:proc.num[redis-server].last()}&lt;1</expression>
+            <expression>{Template App Redis Server Active:proc.num[redis-server].last()}&lt;{$REDIS_SERVER_INSTANCES}</expression>
+            <recovery_mode>0</recovery_mode>
+            <recovery_expression/>
             <name>Redis Server is not running</name>
+            <correlation_mode>0</correlation_mode>
+            <correlation_tag/>
             <url/>
             <status>0</status>
             <priority>5</priority>
             <description/>
             <type>0</type>
+            <manual_close>0</manual_close>
             <dependencies/>
+            <tags/>
         </trigger>
     </triggers>
 </zabbix_export>

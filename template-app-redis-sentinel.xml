@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
-    <version>2.0</version>
-    <date>2017-04-21T16:43:53Z</date>
+    <version>3.4</version>
+    <date>2018-10-30T08:22:30Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -27,17 +27,15 @@
                     <name>Number of running processes ($1)</name>
                     <type>0</type>
                     <snmp_community/>
-                    <multiplier>0</multiplier>
                     <snmp_oid/>
                     <key>proc.num[redis-sentinel]</key>
-                    <delay>60</delay>
-                    <history>30</history>
-                    <trends>365</trends>
+                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM:proc.num_redis-sentinel}</delay>
+                    <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:proc.num_redis-sentinel}</history>
+                    <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:proc.num_redis-sentinel}</trends>
                     <status>0</status>
                     <value_type>3</value_type>
                     <allowed_hosts/>
                     <units/>
-                    <delta>0</delta>
                     <snmpv3_contextname/>
                     <snmpv3_securityname/>
                     <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -45,11 +43,8 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <formula>1</formula>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
-                    <data_type>0</data_type>
                     <authtype>0</authtype>
                     <username/>
                     <password/>
@@ -65,6 +60,9 @@
                     </applications>
                     <valuemap/>
                     <logtimefmt/>
+                    <preprocessing/>
+                    <jmx_endpoint/>
+                    <master_item/>
                 </item>
             </items>
             <discovery_rules>
@@ -74,7 +72,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},items]</key>
-                    <delay>3600</delay>
+                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY:items}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -84,7 +82,6 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
                     <authtype>0</authtype>
@@ -98,24 +95,22 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30</lifetime>
+                    <lifetime>30d</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - sentinel:sentinel_masters</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;sentinel:sentinel_masters&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:sentinel-sentinel_masters}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:sentinel-sentinel_masters}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -123,11 +118,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -143,22 +135,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - sentinel:sentinel_running_scripts</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;sentinel:sentinel_running_scripts&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:sentinel-sentinel_running_scripts}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:sentinel-sentinel_running_scripts}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -166,11 +160,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -186,22 +177,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - sentinel:sentinel_scripts_queue_length</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;sentinel:sentinel_scripts_queue_length&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:sentinel-sentinel_scripts_queue_length}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:sentinel-sentinel_scripts_queue_length}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -209,11 +202,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -229,22 +219,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - server:uptime_in_seconds</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:server-uptime_in_seconds}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:server-uptime_in_seconds}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units>uptime</units>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -252,11 +244,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -272,17 +261,28 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;600</expression>
+                            <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;{$REDIS_SENTINEL_MIN_UPTIME_AFTER_RESTART}</expression>
+                            <recovery_mode>0</recovery_mode>
+                            <recovery_expression/>
                             <name>Redis Sentinel[{#LOCATION}] has been restarted</name>
+                            <correlation_mode>0</correlation_mode>
+                            <correlation_tag/>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
+                            <manual_close>0</manual_close>
+                            <dependencies/>
+                            <tags/>
                         </trigger_prototype>
                     </trigger_prototypes>
                     <graph_prototypes>
@@ -396,6 +396,7 @@
                         </graph_prototype>
                     </graph_prototypes>
                     <host_prototypes/>
+                    <jmx_endpoint/>
                 </discovery_rule>
                 <discovery_rule>
                     <name>Masters discovery</name>
@@ -403,7 +404,7 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},masters]</key>
-                    <delay>3600</delay>
+                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY:masters}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -413,7 +414,6 @@
                     <snmpv3_authpassphrase/>
                     <snmpv3_privprotocol>0</snmpv3_privprotocol>
                     <snmpv3_privpassphrase/>
-                    <delay_flex/>
                     <params/>
                     <ipmi_sensor/>
                     <authtype>0</authtype>
@@ -427,24 +427,22 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30</lifetime>
+                    <lifetime>30d</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - masters:{#SUBJECT}:ckquorum</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:ckquorum&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters-ckquorum}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters-ckquorum}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -452,11 +450,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>3</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -472,22 +467,29 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing>
+                                <step>
+                                    <type>6</type>
+                                    <params/>
+                                </step>
+                            </preprocessing>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - masters:{#SUBJECT}:sentinels</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:sentinels&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters-sentinels}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters-sentinels}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -495,11 +497,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -515,22 +514,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - masters:{#SUBJECT}:slaves</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:slaves&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters-slaves}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters-slaves}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -538,11 +539,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -558,22 +556,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - masters:{#SUBJECT}:status</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:status&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters-status}</history>
+                            <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -581,11 +581,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -601,22 +598,24 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                         <item_prototype>
                             <name>Redis Sentinel[{#LOCATION}] - masters:{#SUBJECT}:usable_sentinels</name>
                             <type>2</type>
                             <snmp_community/>
-                            <multiplier>0</multiplier>
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:usable_sentinels&quot;]</key>
                             <delay>0</delay>
-                            <history>30</history>
-                            <trends>365</trends>
+                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters-usable_sentinels}</history>
+                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters-usable_sentinels}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
                             <units/>
-                            <delta>0</delta>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -624,11 +623,8 @@
                             <snmpv3_authpassphrase/>
                             <snmpv3_privprotocol>0</snmpv3_privprotocol>
                             <snmpv3_privpassphrase/>
-                            <formula>1</formula>
-                            <delay_flex/>
                             <params/>
                             <ipmi_sensor/>
-                            <data_type>0</data_type>
                             <authtype>0</authtype>
                             <username/>
                             <password/>
@@ -644,26 +640,44 @@
                             </applications>
                             <valuemap/>
                             <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <application_prototypes/>
+                            <master_item_prototype/>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
                             <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:ckquorum&quot;].last()}&lt;&gt;1</expression>
+                            <recovery_mode>0</recovery_mode>
+                            <recovery_expression/>
                             <name>Redis Sentinel[{#LOCATION}] {#SUBJECT} cannot reach quorum</name>
+                            <correlation_mode>0</correlation_mode>
+                            <correlation_tag/>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
+                            <manual_close>0</manual_close>
+                            <dependencies/>
+                            <tags/>
                         </trigger_prototype>
                         <trigger_prototype>
                             <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:sentinels&quot;].last()}&lt;&gt;{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:usable_sentinels&quot;].last()}</expression>
+                            <recovery_mode>0</recovery_mode>
+                            <recovery_expression/>
                             <name>Redis Sentinel[{#LOCATION}] {#SUBJECT} is not able to use all sentinels</name>
+                            <correlation_mode>0</correlation_mode>
+                            <correlation_tag/>
                             <url/>
                             <status>0</status>
                             <priority>4</priority>
                             <description/>
                             <type>0</type>
+                            <manual_close>0</manual_close>
+                            <dependencies/>
+                            <tags/>
                         </trigger_prototype>
                     </trigger_prototypes>
                     <graph_prototypes>
@@ -757,12 +771,38 @@
                         </graph_prototype>
                     </graph_prototypes>
                     <host_prototypes/>
+                    <jmx_endpoint/>
                 </discovery_rule>
             </discovery_rules>
+            <httptests/>
             <macros>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD}</macro>
+                    <value>30d</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_INSTANCES}</macro>
+                    <value>1</value>
+                </macro>
                 <macro>
                     <macro>{$REDIS_SENTINEL_LOCATIONS}</macro>
                     <value/>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_MIN_UPTIME_AFTER_RESTART}</macro>
+                    <value>600</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD}</macro>
+                    <value>365d</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY}</macro>
+                    <value>3600</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM}</macro>
+                    <value>60</value>
                 </macro>
             </macros>
             <templates/>
@@ -771,14 +811,20 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].last()}&lt;1</expression>
+            <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].last()}&lt;{$REDIS_SENTINEL_INSTANCES}</expression>
+            <recovery_mode>0</recovery_mode>
+            <recovery_expression/>
             <name>Redis Sentinel is not running</name>
+            <correlation_mode>0</correlation_mode>
+            <correlation_tag/>
             <url/>
             <status>0</status>
             <priority>5</priority>
             <description/>
             <type>0</type>
+            <manual_close>0</manual_close>
             <dependencies/>
+            <tags/>
         </trigger>
     </triggers>
 </zabbix_export>

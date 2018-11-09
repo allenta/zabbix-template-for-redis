@@ -57,7 +57,7 @@
         options:
           - { name: dir, value: /var/lib/redis }
           - { name: daemonize, value: 'yes' }
-          - { name: pidfile, value: '/var/run/redis-{{ port }}' }
+          - { name: pidfile, value: '/var/run/redis-{{ port }}.pid' }
           - { name: dbfilename, value: 'dump-{{ port }}' }
           - { name: appendfilename, value: 'appendonly-{{ port }}' }
           - { name: logfile, value: '/var/log/redis-{{ port }}' }
