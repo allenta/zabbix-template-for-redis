@@ -25,7 +25,7 @@
             <items>
                 <item>
                     <name>Number of running processes ($1)</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>proc.num[redis-server]</key>
@@ -68,7 +68,7 @@
             <discovery_rules>
                 <discovery_rule>
                     <name>Commandstats discovery</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},commandstats]</key>
@@ -260,7 +260,7 @@
                 </discovery_rule>
                 <discovery_rule>
                     <name>Items discovery</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},items]</key>
@@ -3024,7 +3024,7 @@
                 </discovery_rule>
                 <discovery_rule>
                     <name>Keyspace discovery</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},keyspace]</key>

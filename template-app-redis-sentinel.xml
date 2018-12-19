@@ -25,7 +25,7 @@
             <items>
                 <item>
                     <name>Number of running processes ($1)</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>proc.num[redis-sentinel]</key>
@@ -68,7 +68,7 @@
             <discovery_rules>
                 <discovery_rule>
                     <name>Items discovery</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},items]</key>
@@ -400,7 +400,7 @@
                 </discovery_rule>
                 <discovery_rule>
                     <name>Masters discovery</name>
-                    <type>0</type>
+                    <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
                     <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},masters]</key>

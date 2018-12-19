@@ -38,7 +38,7 @@
    * ``{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY}``
    * ``{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM}``
 
-   All that macros are available on normal and active template version. It's also possible to use **contexts** on macros, for example:
+   It's also possible to use **contexts** on macros, for example:
 
    * ``{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:cluster-cluster_slots_assigned}``
    * ``{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:server-uptime_in_seconds}``
