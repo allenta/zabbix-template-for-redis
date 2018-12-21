@@ -98,7 +98,8 @@
     - { name: DBPassword, value: "{{ settings['mysql.zabbix'].password }}" }
   lineinfile:
     path: /etc/zabbix/zabbix_server.conf
-    regexp: ^\s*#?\s*{{ item.name }}\s*=\s*.*
+    regexp: ^\s*{{ item.name }}\s*=\s*.*
+    insertafter: ^\s*#\s*{{ item.name }}\s*=\s*.*
     line: '{{ item.name }}={{ item.value }}'
 
 - name: Enable & start Zabbix Server service
@@ -106,25 +107,37 @@
     name: zabbix-server
     enabled: yes
     state: started
-    # XXX This parameter is needed because without it, zabbix-server service
-    #  doesnt start on a system reload
+    # XXX: This parameter is needed because without it, zabbix-server service
+    # doesn't start on a system reload.
     use: service
 
 - name: Configure Zabbix Agent
-  notify: restart-zabbix-agent
-  loop:
-    - { name: UserParameter, value: "redis_server.discovery[*],/vagrant/zabbix-redis.py -i '$1' -t server discover '$2' 2> /dev/null" }
-    - { name: UserParameter, value: "redis_sentinel.discovery[*],/vagrant/zabbix-redis.py -i '$1' -t sentinel discover '$2' 2> /dev/null"}
-    - { name: Hostname, value: dev }
-  lineinfile:
-    path: /etc/zabbix/zabbix_agentd.conf
-    line: '{{ item.name }}={{ item.value }}'
+  block:
+    - name: Configure Zabbix Agent (UserParameters)
+      notify: restart-zabbix-agent
+      loop:
+        - { name: UserParameter, value: "redis_server.discovery[*],/vagrant/zabbix-redis.py -i '$1' -t server discover '$2' 2> /dev/null" }
+        - { name: UserParameter, value: "redis_sentinel.discovery[*],/vagrant/zabbix-redis.py -i '$1' -t sentinel discover '$2' 2> /dev/null"}
+      lineinfile:
+        path: /etc/zabbix/zabbix_agentd.conf
+        # Can't use insertafter because of Ansible bug: https://github.com/ansible/ansible/issues/38655
+        # insertafter: ^\s*#\s*{{ item.name }}\s*=\s*.*
+        line: '{{ item.name }}={{ item.value }}'
+    - name: Configure Zabbix Agent (other)
+      notify: restart-zabbix-agent
+      loop:
+        - { name: Hostname, value: dev }
+      lineinfile:
+        path: /etc/zabbix/zabbix_agentd.conf
+        regexp: ^\s*{{ item.name }}\s*=\s*.*
+        insertafter: ^\s*#\s*{{ item.name }}\s*=\s*.*
+        line: '{{ item.name }}={{ item.value }}'
 
 - name: Enable & start Zabbix Agent service
   service:
     name: zabbix-agent
     enabled: yes
     state: started
-    # XXX This parameter is needed because without it, zabbix-agent service
-    #  doesnt start on a system reload
+    # XXX: This parameter is needed because without it, zabbix-agent service
+    # doesn't start on a system reload.
     use: service
