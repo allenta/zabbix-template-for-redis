@@ -3,7 +3,7 @@ General tips
 
 - Templates:
     1. ``http://192.168.100.173/zabbix``
-        - Default username/password is ``admin``/``zabbix``.
+        - Default username/password is ``Admin``/``zabbix``.
 
     2. In 'Configuration > Templates' click on 'Import' and select ``template-app-redis-server.xml``.
 
