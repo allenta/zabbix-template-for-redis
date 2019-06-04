@@ -19,7 +19,6 @@ Vagrant.configure('2') do |config|
       '--accelerate3d', 'off',
       '--audio', 'none',
       '--paravirtprovider', 'Default',
-      '--uartmode1', 'disconnected',
     ]
   end
 
