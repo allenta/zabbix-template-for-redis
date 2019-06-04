@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure('2') do |config|
-  config.vm.box = 'ubuntu/xenial64'
-  config.vm.box_version = '=20180315.0.0'
+  config.vm.box = 'allenta/ubuntu.xenial64'
+  config.vm.box_version = '=20190320.0.1'
   config.vm.box_check_update = true
 
   config.ssh.forward_agent = true
