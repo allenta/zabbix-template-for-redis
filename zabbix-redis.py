@@ -7,7 +7,7 @@
 :license: BSD, see LICENSE.txt for more details.
 '''
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, print_function, unicode_literals
 import json
 import re
 import subprocess
@@ -156,7 +156,7 @@ def discover(options):
             else:
                 items = stats(instance, options.redis_type, options.redis_password)
                 ids = set()
-                for name in items.iterkeys():
+                for name in items.keys():
                     match = SUBJECTS[options.redis_type][options.subject].match(name)
                     if match is not None and match.group(1) not in ids:
                         discovery['data'].append({
@@ -304,9 +304,9 @@ def execute(command, stdin=None):
         shell=True,
         stdout=subprocess.PIPE,
         stdin=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True)
-    output = child.communicate(input=stdin)[0]
+        stderr=subprocess.STDOUT)
+    output = child.communicate(
+        input=stdin.encode('utf-8') if stdin is not None else None)[0].decode('utf-8')
     return child.returncode, output
 
 
