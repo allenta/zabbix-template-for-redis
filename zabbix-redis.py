@@ -98,12 +98,12 @@ def send(options):
     for instance in options.redis_instances.split(','):
         instance = instance.strip()
         if instance:
-            items = stats(instance, options.redis_type, options.redis_password)
+            items = _stats(instance, options.redis_type, options.redis_password)
             for name, value in items.items():
                 row = '- redis_%(type)s.info["%(instance)s","%(key)s"] %(tst)d %(value)s\n' % {
                     'type': options.redis_type,
-                    'instance': str2key(instance),
-                    'key': str2key(name),
+                    'instance': _str2key(instance),
+                    'key': _str2key(name),
                     'tst': now,
                     'value': value,
                 }
@@ -111,7 +111,7 @@ def send(options):
                 rows += row
 
     # Submit metrics.
-    rc, output = execute('zabbix_sender -T -r -i - %(config)s %(server)s %(port)s %(host)s' % {
+    rc, output = _execute('zabbix_sender -T -r -i - %(config)s %(server)s %(port)s %(host)s' % {
         'config':
             '-c "%s"' % options.zabbix_config
             if options.zabbix_config is not None else '',
@@ -135,6 +135,29 @@ def send(options):
 
 
 ###############################################################################
+## 'stats' COMMAND
+###############################################################################
+
+def stats(options):
+    # Initializations.
+    result = {}
+
+    # Build master item contents.
+    for instance in options.redis_instances.split(','):
+        instance = instance.strip()
+        if instance:
+            items = _stats(instance, options.redis_type, options.redis_password)
+            for name, value in items.items():
+                result['%(instance)s.%(name)s' % {
+                    'instance': _str2key(instance),
+                    'name': _str2key(name),
+                }] = value
+
+    # Render output.
+    sys.stdout.write(json.dumps(result, separators=(',', ':')))
+
+
+###############################################################################
 ## 'discover' COMMAND
 ###############################################################################
 
@@ -151,19 +174,19 @@ def discover(options):
             if options.subject == 'items':
                 discovery['data'].append({
                     '{#LOCATION}': instance,
-                    '{#LOCATION_ID}': str2key(instance),
+                    '{#LOCATION_ID}': _str2key(instance),
                 })
             else:
-                items = stats(instance, options.redis_type, options.redis_password)
+                items = _stats(instance, options.redis_type, options.redis_password)
                 ids = set()
                 for name in items.keys():
                     match = SUBJECTS[options.redis_type][options.subject].match(name)
                     if match is not None and match.group(1) not in ids:
                         discovery['data'].append({
                             '{#LOCATION}': instance,
-                            '{#LOCATION_ID}': str2key(instance),
+                            '{#LOCATION_ID}': _str2key(instance),
                             '{#SUBJECT}': match.group(1),
-                            '{#SUBJECT_ID}': str2key(match.group(1)),
+                            '{#SUBJECT_ID}': _str2key(match.group(1)),
                         })
                         ids.add(match.group(1))
 
@@ -175,7 +198,7 @@ def discover(options):
 ## HELPERS
 ###############################################################################
 
-def stats(location, type, password):
+def _stats(location, type, password):
     # Initializations.
     result = {}
     clustered = False
@@ -195,7 +218,7 @@ def stats(location, type, password):
         opts += ' -a "%s"' % password
 
     # Fetch general stats through redis-cli.
-    rc, output = execute('redis-cli %(opts)s INFO %(section)s' % {
+    rc, output = _execute('redis-cli %(opts)s INFO %(section)s' % {
         'opts': opts,
         'section': 'all' if type == 'server' else 'default',
     })
@@ -228,7 +251,7 @@ def stats(location, type, password):
                             subname = 'masters:%s(%s):%s' % (
                                 key, subvalues['name'], subkey)
                         elif subkey == 'name':
-                            result.update(stats_sentinel(
+                            result.update(_stats_sentinel(
                                 opts,
                                 subvalue,
                                 'masters:%s(%s)' % (key, subvalue)))
@@ -245,15 +268,15 @@ def stats(location, type, password):
 
     # Fetch cluster stats through redis-cli.
     if type == 'server' and clustered:
-        result.update(stats_cluster(opts))
+        result.update(_stats_cluster(opts))
 
     # Done!
     return result
 
 
-def stats_sentinel(opts, master_name, prefix):
+def _stats_sentinel(opts, master_name, prefix):
     result = {}
-    rc, output = execute('redis-cli %(opts)s SENTINEL ckquorum %(name)s' % {
+    rc, output = _execute('redis-cli %(opts)s SENTINEL ckquorum %(name)s' % {
         'opts': opts,
         'name': master_name,
     })
@@ -274,9 +297,9 @@ def stats_sentinel(opts, master_name, prefix):
     return result
 
 
-def stats_cluster(opts):
+def _stats_cluster(opts):
     result = {}
-    rc, output = execute('redis-cli %(opts)s CLUSTER INFO' % {
+    rc, output = _execute('redis-cli %(opts)s CLUSTER INFO' % {
         'opts': opts,
     })
     if rc == 0:
@@ -291,14 +314,14 @@ def stats_cluster(opts):
     return result
 
 
-def str2key(name):
+def _str2key(name):
     result = name
     for char in ['(', ')', ',']:
         result = result.replace(char, '\\' + char)
     return result
 
 
-def execute(command, stdin=None):
+def _execute(command, stdin=None):
     child = subprocess.Popen(
         command,
         shell=True,
@@ -354,6 +377,11 @@ def main():
         '-s', '--zabbix-host', dest='zabbix_host',
         type=str, required=False, default=None,
         help='host name as registered in the Zabbix frontend')
+
+    # Set up 'stats' command.
+    subparser = subparsers.add_parser(
+        'stats',
+        help='collect Redis stats')
 
     # Set up 'discover' command.
     subparser = subparsers.add_parser(

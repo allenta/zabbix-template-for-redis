@@ -2,7 +2,7 @@
   block:
     - name: Install Zabbix release
       apt:
-        deb: http://repo.zabbix.com/zabbix/3.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.4-1+xenial_all.deb
+        deb: http://repo.zabbix.com/zabbix/4.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.0-2+xenial_all.deb
 
     - name: Install Zabbix packages
       apt:
@@ -117,7 +117,9 @@
       notify: restart-zabbix-agent
       loop:
         - { name: UserParameter, value: "redis_server.discovery[*],/vagrant/zabbix-redis.py -i '$1' -t server discover '$2' 2> /dev/null" }
+        - { name: UserParameter, value: "redis_server.stats[*],/vagrant/zabbix-redis.py -i '$1' -t server stats 2> /dev/null" }
         - { name: UserParameter, value: "redis_sentinel.discovery[*],/vagrant/zabbix-redis.py -i '$1' -t sentinel discover '$2' 2> /dev/null"}
+        - { name: UserParameter, value: "redis_sentinel.stats[*],/vagrant/zabbix-redis.py -i '$1' -t sentinel stats 2> /dev/null"}
       lineinfile:
         path: /etc/zabbix/zabbix_agentd.conf
         # Can't use insertafter because of Ansible bug: https://github.com/ansible/ansible/issues/38655
