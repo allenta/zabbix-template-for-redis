@@ -49,7 +49,7 @@ Vagrant.configure('2') do |config|
         }
       }
       ansible.install_mode = 'pip'
-      ansible.version = '2.6.4'
+      ansible.version = '2.8.2'
      end
 
     machine.vm.network :public_network
