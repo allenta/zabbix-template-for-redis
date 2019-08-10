@@ -172,7 +172,7 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30d</lifetime>
+                    <lifetime>{$REDIS_SENTINEL_KEEP_LOST_RESOURCES_PERIOD:items}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
@@ -632,7 +632,7 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>30d</lifetime>
+                    <lifetime>{$REDIS_SENTINEL_KEEP_LOST_RESOURCES_PERIOD:masters}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
@@ -1168,6 +1168,10 @@
                 <macro>
                     <macro>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM}</macro>
                     <value>60</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL_KEEP_LOST_RESOURCES_PERIOD}</macro>
+                    <value>30d</value>
                 </macro>
             </macros>
             <templates/>
