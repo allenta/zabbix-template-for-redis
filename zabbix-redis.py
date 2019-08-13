@@ -102,8 +102,8 @@ def send(options):
             for name, value in items.items():
                 row = '- redis_%(type)s.info["%(instance)s","%(key)s"] %(tst)d %(value)s\n' % {
                     'type': options.redis_type,
-                    'instance': _str2key(instance),
-                    'key': _str2key(name),
+                    'instance': _safe_zabbix_string(instance),
+                    'key': _safe_zabbix_string(name),
                     'tst': now,
                     'value': value,
                 }
@@ -149,8 +149,8 @@ def stats(options):
             items = _stats(instance, options.redis_type, options.redis_password)
             for name, value in items.items():
                 result['%(instance)s.%(name)s' % {
-                    'instance': _str2key(instance),
-                    'name': _str2key(name),
+                    'instance': _safe_zabbix_string(instance),
+                    'name': _safe_zabbix_string(name),
                 }] = value
 
     # Render output.
@@ -174,7 +174,7 @@ def discover(options):
             if options.subject == 'items':
                 discovery['data'].append({
                     '{#LOCATION}': instance,
-                    '{#LOCATION_ID}': _str2key(instance),
+                    '{#LOCATION_ID}': _safe_zabbix_string(instance),
                 })
             else:
                 items = _stats(instance, options.redis_type, options.redis_password)
@@ -184,9 +184,9 @@ def discover(options):
                     if match is not None and match.group(1) not in ids:
                         discovery['data'].append({
                             '{#LOCATION}': instance,
-                            '{#LOCATION_ID}': _str2key(instance),
+                            '{#LOCATION_ID}': _safe_zabbix_string(instance),
                             '{#SUBJECT}': match.group(1),
-                            '{#SUBJECT_ID}': _str2key(match.group(1)),
+                            '{#SUBJECT_ID}': _safe_zabbix_string(match.group(1)),
                         })
                         ids.add(match.group(1))
 
@@ -314,11 +314,11 @@ def _stats_cluster(opts):
     return result
 
 
-def _str2key(name):
-    result = name
-    for char in ['(', ')', ',']:
-        result = result.replace(char, '\\' + char)
-    return result
+def _safe_zabbix_string(value):
+    # Return a modified version of 'value' safe to be used as part of:
+    #   - A quoted key parameter (see https://www.zabbix.com/documentation/4.0/manual/config/items/item/key).
+    #   - A JSON string.
+    return value.replace('"', '\\"')
 
 
 def _execute(command, stdin=None):

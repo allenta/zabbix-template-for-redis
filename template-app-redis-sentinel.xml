@@ -28,7 +28,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                    <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                     <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM:stats}</delay>
                     <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:stats}</history>
                     <trends>0</trends>
@@ -148,7 +148,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},items]</key>
+                    <key>redis_sentinel.discovery[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;,&quot;items&quot;]</key>
                     <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY:items}</delay>
                     <status>0</status>
                     <allowed_hosts/>
@@ -239,7 +239,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -306,7 +306,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -373,7 +373,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -440,7 +440,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -597,7 +597,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_sentinel.discovery[{$REDIS_SENTINEL_LOCATIONS},masters]</key>
+                    <key>redis_sentinel.discovery[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;,&quot;masters&quot;]</key>
                     <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY:masters}</delay>
                     <status>0</status>
                     <allowed_hosts/>
@@ -692,7 +692,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -759,7 +759,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -826,7 +826,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -893,7 +893,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -960,7 +960,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[{$REDIS_SENTINEL_LOCATIONS}]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>

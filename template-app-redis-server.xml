@@ -28,7 +28,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                    <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                     <delay>{$REDIS_SERVER_UPDATE_INTERVAL_ITEM:stats}</delay>
                     <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:stats}</history>
                     <trends>0</trends>
@@ -148,7 +148,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},commandstats]</key>
+                    <key>redis_server.discovery[&quot;{$REDIS_SERVER_LOCATIONS}&quot;,&quot;commandstats&quot;]</key>
                     <delay>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY:commandstats}</delay>
                     <status>0</status>
                     <allowed_hosts/>
@@ -243,7 +243,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -310,7 +310,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -406,7 +406,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},items]</key>
+                    <key>redis_server.discovery[&quot;{$REDIS_SERVER_LOCATIONS}&quot;,&quot;items&quot;]</key>
                     <delay>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY:items}</delay>
                     <status>0</status>
                     <allowed_hosts/>
@@ -497,7 +497,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -564,7 +564,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -631,7 +631,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -698,7 +698,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -765,7 +765,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -832,7 +832,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -899,7 +899,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -966,7 +966,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1033,7 +1033,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1104,7 +1104,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1175,7 +1175,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1246,7 +1246,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1317,7 +1317,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1444,7 +1444,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1511,7 +1511,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1578,7 +1578,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1645,7 +1645,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1712,7 +1712,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1779,7 +1779,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1846,7 +1846,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1913,7 +1913,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -1980,7 +1980,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2047,7 +2047,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2114,7 +2114,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2181,7 +2181,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2248,7 +2248,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2315,7 +2315,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2386,7 +2386,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2457,7 +2457,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2528,7 +2528,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2599,7 +2599,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2666,7 +2666,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2733,7 +2733,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2804,7 +2804,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2875,7 +2875,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -2946,7 +2946,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3017,7 +3017,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3088,7 +3088,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3159,7 +3159,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3230,7 +3230,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -3301,7 +3301,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -4214,7 +4214,7 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_server.discovery[{$REDIS_SERVER_LOCATIONS},keyspace]</key>
+                    <key>redis_server.discovery[&quot;{$REDIS_SERVER_LOCATIONS}&quot;,&quot;keyspace&quot;]</key>
                     <delay>{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY:keyspace}</delay>
                     <status>0</status>
                     <allowed_hosts/>
@@ -4305,7 +4305,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -4372,7 +4372,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -4439,7 +4439,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_server.stats[{$REDIS_SERVER_LOCATIONS}]</key>
+                                <key>redis_server.stats[&quot;{$REDIS_SERVER_LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
