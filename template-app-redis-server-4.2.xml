@@ -1373,7 +1373,7 @@
                             <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:items:hit_ratio}</history>
                             <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:items:hit_ratio}</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>%</units>
                             <snmpv3_contextname/>
@@ -3287,7 +3287,7 @@
                             <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:items:stats-total_net_input_bytes}</history>
                             <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:items:stats-total_net_input_bytes}</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>Bps</units>
                             <snmpv3_contextname/>
@@ -3362,7 +3362,7 @@
                             <history>{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:items:stats-total_net_output_bytes}</history>
                             <trends>{$REDIS_SERVER_TREND_STORAGE_PERIOD:items:stats-total_net_output_bytes}</trends>
                             <status>0</status>
-                            <value_type>3</value_type>
+                            <value_type>0</value_type>
                             <allowed_hosts/>
                             <units>Bps</units>
                             <snmpv3_contextname/>
