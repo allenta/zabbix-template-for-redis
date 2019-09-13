@@ -454,7 +454,7 @@
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;{$REDIS_SENTINEL.UPTIME.MIN}</expression>
+                            <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:items:uptime})}&lt;{$REDIS_SENTINEL.UPTIME.MIN}</expression>
                             <recovery_mode>0</recovery_mode>
                             <recovery_expression/>
                             <name>Redis Sentinel[{#LOCATION}] has been restarted</name>
@@ -1154,6 +1154,14 @@
                     <value>1m</value>
                 </macro>
                 <macro>
+                    <macro>{$REDIS_SENTINEL.LAST_VALUES_TO_CHECK}</macro>
+                    <value>#1</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}</macro>
+                    <value>30d</value>
+                </macro>
+                <macro>
                     <macro>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}</macro>
                     <value>1h</value>
                 </macro>
@@ -1169,10 +1177,6 @@
                     <macro>{$REDIS_SENTINEL.UPTIME.MIN}</macro>
                     <value>10m</value>
                 </macro>
-                <macro>
-                    <macro>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}</macro>
-                    <value>30d</value>
-                </macro>
             </macros>
             <templates/>
             <screens/>
@@ -1181,7 +1185,7 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].last()}&lt;{$REDIS_SENTINEL.PROCESSES.MIN}</expression>
+            <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:proc.num-redis-sentinel})}&lt;{$REDIS_SENTINEL.PROCESSES.MIN}</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>Redis Sentinel is not running</name>

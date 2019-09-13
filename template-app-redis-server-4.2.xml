@@ -3430,7 +3430,7 @@
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;{$REDIS_SERVER.UPTIME.MIN}</expression>
+                            <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:items:server:uptime_in_seconds})}&lt;{$REDIS_SERVER.UPTIME.MIN}</expression>
                             <recovery_mode>0</recovery_mode>
                             <recovery_expression/>
                             <name>Redis Server[{#LOCATION}] has been restarted</name>
@@ -3462,7 +3462,7 @@
                             <tags/>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:evicted_keys&quot;].last()}&gt;{$REDIS_SERVER.EVICTED_KEYS.MAX}</expression>
+                            <expression>{Template App Redis Server:redis_server.info[&quot;{#LOCATION_ID}&quot;,&quot;stats:evicted_keys&quot;].min({$REDIS_SERVER.LAST_VALUES_TO_CHECK:items:stats:evicted_keys})}&gt;{$REDIS_SERVER.EVICTED_KEYS.MAX}</expression>
                             <recovery_mode>0</recovery_mode>
                             <recovery_expression/>
                             <name>Redis Server[{#LOCATION}] is evicting keys</name>
@@ -4689,6 +4689,10 @@
                     <value>1m</value>
                 </macro>
                 <macro>
+                    <macro>{$REDIS_SERVER.LAST_VALUES_TO_CHECK}</macro>
+                    <value>#1</value>
+                </macro>
+                <macro>
                     <macro>{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD}</macro>
                     <value>30d</value>
                 </macro>
@@ -4716,7 +4720,7 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App Redis Server:proc.num[redis-server].last()}&lt;{$REDIS_SERVER.PROCESSES.MIN}</expression>
+            <expression>{Template App Redis Server:proc.num[redis-server].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:proc.num-redis-server})}&lt;{$REDIS_SERVER.PROCESSES.MIN}</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>Redis Server is not running</name>
