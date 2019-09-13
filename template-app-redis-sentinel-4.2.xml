@@ -28,9 +28,9 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
-                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM:stats}</delay>
-                    <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:stats}</history>
+                    <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
+                    <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL:stats}</delay>
+                    <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:stats}</history>
                     <trends>0</trends>
                     <status>0</status>
                     <value_type>4</value_type>
@@ -88,9 +88,9 @@
                     <snmp_community/>
                     <snmp_oid/>
                     <key>proc.num[redis-sentinel]</key>
-                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM:proc.num_redis-sentinel}</delay>
-                    <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:proc.num_redis-sentinel}</history>
-                    <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:proc.num_redis-sentinel}</trends>
+                    <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL:proc.num_redis-sentinel}</delay>
+                    <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:proc.num_redis-sentinel}</history>
+                    <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:proc.num_redis-sentinel}</trends>
                     <status>0</status>
                     <value_type>3</value_type>
                     <allowed_hosts/>
@@ -148,8 +148,8 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_sentinel.discovery[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;,&quot;items&quot;]</key>
-                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY:items}</delay>
+                    <key>redis_sentinel.discovery[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;,&quot;items&quot;]</key>
+                    <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:items}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -172,7 +172,7 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>{$REDIS_SENTINEL_KEEP_LOST_RESOURCES_PERIOD:items}</lifetime>
+                    <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:items}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
@@ -182,8 +182,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;sentinel:sentinel_masters&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:items:sentinel-sentinel_masters}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:items:sentinel-sentinel_masters}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:items:sentinel-sentinel_masters}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:items:sentinel-sentinel_masters}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -241,7 +241,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -251,8 +251,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;sentinel:sentinel_running_scripts&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:items:sentinel-sentinel_running_scripts}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:items:sentinel-sentinel_running_scripts}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:items:sentinel-sentinel_running_scripts}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:items:sentinel-sentinel_running_scripts}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -310,7 +310,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -320,8 +320,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;sentinel:sentinel_scripts_queue_length&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:items:sentinel-sentinel_scripts_queue_length}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:items:sentinel-sentinel_scripts_queue_length}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:items:sentinel-sentinel_scripts_queue_length}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:items:sentinel-sentinel_scripts_queue_length}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -379,7 +379,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -389,8 +389,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:items:server-uptime_in_seconds}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:items:server-uptime_in_seconds}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:items:server-uptime_in_seconds}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:items:server-uptime_in_seconds}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -448,13 +448,13 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
                     <trigger_prototypes>
                         <trigger_prototype>
-                            <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;{$REDIS_SENTINEL_MIN_UPTIME_AFTER_RESTART}</expression>
+                            <expression>{Template App Redis Sentinel:redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;server:uptime_in_seconds&quot;].last()}&lt;{$REDIS_SENTINEL.UPTIME.MIN}</expression>
                             <recovery_mode>0</recovery_mode>
                             <recovery_expression/>
                             <name>Redis Sentinel[{#LOCATION}] has been restarted</name>
@@ -608,8 +608,8 @@
                     <type>7</type>
                     <snmp_community/>
                     <snmp_oid/>
-                    <key>redis_sentinel.discovery[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;,&quot;masters&quot;]</key>
-                    <delay>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY:masters}</delay>
+                    <key>redis_sentinel.discovery[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;,&quot;masters&quot;]</key>
+                    <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:masters}</delay>
                     <status>0</status>
                     <allowed_hosts/>
                     <snmpv3_contextname/>
@@ -632,7 +632,7 @@
                         <formula/>
                         <conditions/>
                     </filter>
-                    <lifetime>{$REDIS_SENTINEL_KEEP_LOST_RESOURCES_PERIOD:masters}</lifetime>
+                    <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:masters}</lifetime>
                     <description/>
                     <item_prototypes>
                         <item_prototype>
@@ -642,8 +642,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:ckquorum&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters:masters-ckquorum}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters:masters-ckquorum}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:masters:masters-ckquorum}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:masters:masters-ckquorum}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -707,7 +707,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -717,8 +717,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:sentinels&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters:masters-sentinels}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters:masters-sentinels}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:masters:masters-sentinels}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:masters:masters-sentinels}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -776,7 +776,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -786,8 +786,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:slaves&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters:masters-slaves}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters:masters-slaves}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:masters:masters-slaves}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:masters:masters-slaves}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -845,7 +845,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -855,7 +855,7 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:status&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters:masters-status}</history>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:masters:masters-status}</history>
                             <trends>0</trends>
                             <status>0</status>
                             <value_type>4</value_type>
@@ -914,7 +914,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                         <item_prototype>
@@ -924,8 +924,8 @@
                             <snmp_oid/>
                             <key>redis_sentinel.info[&quot;{#LOCATION_ID}&quot;,&quot;masters:{#SUBJECT_ID}:usable_sentinels&quot;]</key>
                             <delay>0</delay>
-                            <history>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:masters:masters-usable_sentinels}</history>
-                            <trends>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD:masters:masters-usable_sentinels}</trends>
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:masters:masters-usable_sentinels}</history>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:masters:masters-usable_sentinels}</trends>
                             <status>0</status>
                             <value_type>3</value_type>
                             <allowed_hosts/>
@@ -983,7 +983,7 @@
                             <verify_host>0</verify_host>
                             <application_prototypes/>
                             <master_item>
-                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL_LOCATIONS}&quot;]</key>
+                                <key>redis_sentinel.stats[&quot;{$REDIS_SENTINEL.LOCATIONS}&quot;]</key>
                             </master_item>
                         </item_prototype>
                     </item_prototypes>
@@ -1138,39 +1138,39 @@
             <httptests/>
             <macros>
                 <macro>
-                    <macro>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD}</macro>
-                    <value>30d</value>
-                </macro>
-                <macro>
-                    <macro>{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:stats}</macro>
+                    <macro>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:stats}</macro>
                     <value>0</value>
                 </macro>
                 <macro>
-                    <macro>{$REDIS_SENTINEL_INSTANCES}</macro>
-                    <value>1</value>
+                    <macro>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</macro>
+                    <value>30d</value>
                 </macro>
                 <macro>
-                    <macro>{$REDIS_SENTINEL_LOCATIONS}</macro>
-                    <value/>
-                </macro>
-                <macro>
-                    <macro>{$REDIS_SENTINEL_MIN_UPTIME_AFTER_RESTART}</macro>
-                    <value>600</value>
-                </macro>
-                <macro>
-                    <macro>{$REDIS_SENTINEL_TREND_STORAGE_PERIOD}</macro>
+                    <macro>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</macro>
                     <value>365d</value>
                 </macro>
                 <macro>
-                    <macro>{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY}</macro>
-                    <value>3600</value>
+                    <macro>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</macro>
+                    <value>1m</value>
                 </macro>
                 <macro>
-                    <macro>{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM}</macro>
-                    <value>60</value>
+                    <macro>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}</macro>
+                    <value>1h</value>
                 </macro>
                 <macro>
-                    <macro>{$REDIS_SENTINEL_KEEP_LOST_RESOURCES_PERIOD}</macro>
+                    <macro>{$REDIS_SENTINEL.LOCATIONS}</macro>
+                    <value/>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL.PROCESSES.MIN}</macro>
+                    <value>1</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL.UPTIME.MIN}</macro>
+                    <value>10m</value>
+                </macro>
+                <macro>
+                    <macro>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}</macro>
                     <value>30d</value>
                 </macro>
             </macros>
@@ -1181,7 +1181,7 @@
     </templates>
     <triggers>
         <trigger>
-            <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].last()}&lt;{$REDIS_SENTINEL_INSTANCES}</expression>
+            <expression>{Template App Redis Sentinel:proc.num[redis-sentinel].last()}&lt;{$REDIS_SENTINEL.PROCESSES.MIN}</expression>
             <recovery_mode>0</recovery_mode>
             <recovery_expression/>
             <name>Redis Sentinel is not running</name>

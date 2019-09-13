@@ -11,33 +11,34 @@
 
 3. Import the required templates (``template-app-redis-server.xml`` and / or ``template-app-redis-sentinel.xml`` files).
 
-4. Add an existing / new host to the ``Redis servers`` group and link it to the right template (``Template App Redis Server`` for Redis Server and ``Template App Redis Sentinel`` for Redis Sentinel). Beware depending on the used template you must set a value for the ``{$REDIS_SERVER_LOCATIONS}`` or ``{$REDIS_SENTINEL_LOCATIONS}`` macro (comma-delimited list of Redis instances; ``port``, ``host:port`` and ``unix:///path/to/socket`` formats are allowed). There are defined macros for ``Template App Redis Server`` and ``Template App Redis Sentinel``.
+4. Add an existing / new host to the ``Redis servers`` group and link it to the right template (``Template App Redis Server`` for Redis Server and ``Template App Redis Sentinel`` for Redis Sentinel). Beware depending on the used template you must set a value for the ``{$REDIS_SERVER.LOCATIONS}`` or ``{$REDIS_SENTINEL.LOCATIONS}`` macro (comma-delimited list of Redis instances; ``port``, ``host:port`` and ``unix:///path/to/socket`` formats are allowed). There are defined macros for ``Template App Redis Server`` and ``Template App Redis Sentinel``.
 
    For ``Template App Redis Server``:
 
-   * ``{$REDIS_SERVER_EVICTED_KEYS_ALLOWED}``
-   * ``{$REDIS_SERVER_HISTORY_STORAGE_PERIOD}``
-   * ``{$REDIS_SERVER_INSTANCES}``
-   * ``{$REDIS_SERVER_KEEP_LOST_RESOURCES_PERIOD}``
-   * ``{$REDIS_SERVER_LOCATIONS}``
-   * ``{$REDIS_SERVER_MIN_UPTIME_AFTER_RESTART}``
-   * ``{$REDIS_SERVER_TREND_STORAGE_PERIOD}``
-   * ``{$REDIS_SERVER_UPDATE_INTERVAL_DISCOVERY}``
-   * ``{$REDIS_SERVER_UPDATE_INTERVAL_ITEM}``
+   * ``{$REDIS_SERVER.EVICTED_KEYS.MAX}``
+   * ``{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD}``
+   * ``{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD}``
+   * ``{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}``
+   * ``{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD}``
+   * ``{$REDIS_SERVER.LLD_UPDATE_INTERVAL}``
+   * ``{$REDIS_SERVER.LOCATIONS}``
+   * ``{$REDIS_SERVER.PROCESSES.MIN}``
+   * ``{$REDIS_SERVER.UPTIME.MIN}``
 
    For ``Template App Redis Sentinel``:
 
-   * ``{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD}``
-   * ``{$REDIS_SENTINEL_INSTANCES}``
-   * ``{$REDIS_SENTINEL_LOCATIONS}``
-   * ``{$REDIS_SENTINEL_MIN_UPTIME_AFTER_RESTART}``
-   * ``{$REDIS_SENTINEL_TREND_STORAGE_PERIOD}``
-   * ``{$REDIS_SENTINEL_UPDATE_INTERVAL_DISCOVERY}``
-   * ``{$REDIS_SENTINEL_UPDATE_INTERVAL_ITEM}``
+   * ``{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}``
+   * ``{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}``
+   * ``{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}``
+   * ``{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}``
+   * ``{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}``
+   * ``{$REDIS_SENTINEL.LOCATIONS}``
+   * ``{$REDIS_SENTINEL.PROCESSES.MIN}``
+   * ``{$REDIS_SENTINEL.UPTIME.MIN}``
 
    It's also possible to use **contexts** on macros, for example:
 
-   * ``{$REDIS_SERVER_HISTORY_STORAGE_PERIOD:items:cluster-cluster_slots_assigned}``
-   * ``{$REDIS_SENTINEL_HISTORY_STORAGE_PERIOD:items:server-uptime_in_seconds}``
+   * ``{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD:items:cluster-cluster_slots_assigned}``
+   * ``{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:items:server-uptime_in_seconds}``
 
 5. Adjust triggers and trigger prototypes according with your preferences.

@@ -13,4 +13,4 @@ General tips
         - Host name: ``dev``
         - Group: ``Redis servers``
         - Linked templates: ``Template App Redis Server`` and / or ``Template App Redis Sentinel``
-        - Macros: ``{$REDIS_SERVER_LOCATIONS}`` => ``6379, 6380, 6381, 7000, 7001, 7002, 7003, 7004, 7005`` and/or ``{$REDIS_SENTINEL_LOCATIONS}`` => ``26379, 26380, 26381``
+        - Macros: ``{$REDIS_SERVER.LOCATIONS}`` => ``6379, 6380, 6381, 7000, 7001, 7002, 7003, 7004, 7005`` and/or ``{$REDIS_SENTINEL.LOCATIONS}`` => ``26379, 26380, 26381``
