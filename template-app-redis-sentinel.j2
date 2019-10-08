@@ -1,0 +1,659 @@
+{#-#########################################################################-#}
+{#- HELPERS -#}
+{#-#########################################################################-#}
+
+{%- macro discovery_rule(rule, items, triggers, graphs) -%}
+    <discovery_rule>
+        <name>{{ rule.name|e }}</name>
+        <type>7</type>
+        <snmp_community/>
+        <snmp_oid/>
+        <key>{{ rule.key|e }}</key>
+        <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:{{ rule.context }}}</delay>
+        <status>0</status>
+        <allowed_hosts/>
+        <snmpv3_contextname/>
+        <snmpv3_securityname/>
+        <snmpv3_securitylevel>0</snmpv3_securitylevel>
+        <snmpv3_authprotocol>0</snmpv3_authprotocol>
+        <snmpv3_authpassphrase/>
+        <snmpv3_privprotocol>0</snmpv3_privprotocol>
+        <snmpv3_privpassphrase/>
+        <params/>
+        <ipmi_sensor/>
+        <authtype>0</authtype>
+        <username/>
+        <password/>
+        <publickey/>
+        <privatekey/>
+        <port/>
+        <filter>
+            <evaltype>0</evaltype>
+            <formula/>
+            <conditions/>
+        </filter>
+        <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:{{ rule.context }}}</lifetime>
+        <description/>
+        <host_prototypes/>
+        <jmx_endpoint/>
+        <timeout>3s</timeout>
+        <url/>
+        <query_fields/>
+        <posts/>
+        <status_codes>200</status_codes>
+        <follow_redirects>1</follow_redirects>
+        <post_type>0</post_type>
+        <http_proxy/>
+        <headers/>
+        <retrieve_mode>0</retrieve_mode>
+        <request_method>0</request_method>
+        <allow_traps>0</allow_traps>
+        <ssl_cert_file/>
+        <ssl_key_file/>
+        <ssl_key_password/>
+        <verify_peer>0</verify_peer>
+        <verify_host>0</verify_host>
+        {% if version == '4.2' %}
+            <lld_macro_paths/>
+            <preprocessing/>
+            <master_item/>
+        {% endif %}
+        <item_prototypes>
+            {% for item in items %}
+                <item_prototype>
+                    <name>Redis Sentinel[{{ '{#' }}LOCATION}] - {{ item.name|e }}</name>
+                    <type>{{ item.type }}</type>
+                    <snmp_community/>
+                    <snmp_oid/>
+                    <key>{{ item.key|e }}</key>
+                    {% if 'delay' in item and item.delay %}
+                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
+                    {% else %}
+                        <delay>0</delay>
+                    {% endif %}
+                    <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                    {% if 'trends' in item and not item.trends %}
+                        <trends>0</trends>
+                    {% else %}
+                        <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                    {% endif %}
+                    <status>0</status>
+                    <value_type>{{ item.value_type }}</value_type>
+                    <allowed_hosts/>
+                    <units>{{ item.units|default('')|e }}</units>
+                    <snmpv3_contextname/>
+                    <snmpv3_securityname/>
+                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
+                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
+                    <snmpv3_authpassphrase/>
+                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
+                    <snmpv3_privpassphrase/>
+                    <params>{{ item.params|default('')|e }}</params>
+                    <ipmi_sensor/>
+                    <authtype>0</authtype>
+                    <username/>
+                    <password/>
+                    <publickey/>
+                    <privatekey/>
+                    <port/>
+                    <description/>
+                    <inventory_link>0</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Redis Sentinel</name>
+                        </application>
+                    </applications>
+                    <valuemap/>
+                    <logtimefmt/>
+                    {% if 'master_item_key' in item %}
+                        <master_item>
+                            <key>{{ item.master_item_key|e }}</key>
+                        </master_item>
+                    {% else %}
+                        <master_item/>
+                    {% endif %}
+                    {% if 'preprocessing' in item %}
+                        <preprocessing>
+                            {% for step in item.preprocessing %}
+                                <step>
+                                    <type>{{ step.type }}</type>
+                                    <params>{{ step.params|default('')|e }}</params>
+                                    {% if version == '4.2' %}
+                                        <error_handler>{{ step.error_handler|default(0) }}</error_handler>
+                                        <error_handler_params/>
+                                    {% endif %}
+                                </step>
+                            {% endfor %}
+                        </preprocessing>
+                    {% else %}
+                        <preprocessing/>
+                    {% endif %}
+                    <jmx_endpoint/>
+                    <timeout>3s</timeout>
+                    <url/>
+                    <query_fields/>
+                    <posts/>
+                    <status_codes>200</status_codes>
+                    <follow_redirects>1</follow_redirects>
+                    <post_type>0</post_type>
+                    <http_proxy/>
+                    <headers/>
+                    <retrieve_mode>0</retrieve_mode>
+                    <request_method>0</request_method>
+                    <output_format>0</output_format>
+                    <allow_traps>0</allow_traps>
+                    <ssl_cert_file/>
+                    <ssl_key_file/>
+                    <ssl_key_password/>
+                    <verify_peer>0</verify_peer>
+                    <verify_host>0</verify_host>
+                    <application_prototypes/>
+                </item_prototype>
+            {% endfor %}
+        </item_prototypes>
+        <trigger_prototypes>
+            {% for trigger in triggers %}
+                <trigger_prototype>
+                    <expression>{{ trigger.expression|e }}</expression>
+                    <recovery_mode>0</recovery_mode>
+                    <recovery_expression/>
+                    <name>Redis Sentinel[{{ '{#' }}LOCATION}] {{ trigger.name|e }}</name>
+                    <correlation_mode>0</correlation_mode>
+                    <correlation_tag/>
+                    <url/>
+                    <status>0</status>
+                    <priority>{{ trigger.priority }}</priority>
+                    <description/>
+                    <type>0</type>
+                    <manual_close>0</manual_close>
+                    <dependencies/>
+                    <tags/>
+                </trigger_prototype>
+            {% endfor %}
+        </trigger_prototypes>
+        <graph_prototypes>
+            {% for graph in graphs %}
+                <graph_prototype>
+                    <name>Redis Sentinel[{{ '{#' }}LOCATION}] &gt; {{ graph.name|e }}</name>
+                    <width>900</width>
+                    <height>200</height>
+                    <yaxismin>0.0000</yaxismin>
+                    <yaxismax>100.0000</yaxismax>
+                    <show_work_period>1</show_work_period>
+                    <show_triggers>1</show_triggers>
+                    <type>{{ graph.type|default(0) }}</type>
+                    <show_legend>1</show_legend>
+                    <show_3d>0</show_3d>
+                    <percent_left>0.0000</percent_left>
+                    <percent_right>0.0000</percent_right>
+                    <ymin_type_1>0</ymin_type_1>
+                    <ymax_type_1>0</ymax_type_1>
+                    <ymin_item_1>0</ymin_item_1>
+                    <ymax_item_1>0</ymax_item_1>
+                    <graph_items>
+                        {% for gitem in graph['items'] %}
+                            <graph_item>
+                                <sortorder>{{ loop.index0 }}</sortorder>
+                                <drawtype>{{ gitem.drawtype|default(0) }}</drawtype>
+                                <color>{{ gitem.color }}</color>
+                                <yaxisside>{{ gitem.yaxisside|default(0) }}</yaxisside>
+                                <calc_fnc>{{ gitem.calc_fnc|default(2) }}</calc_fnc>
+                                <type>0</type>
+                                <item>
+                                    <host>Template App Redis Sentinel</host>
+                                    <key>{{ gitem.key|e }}</key>
+                                </item>
+                            </graph_item>
+                        {% endfor %}
+                    </graph_items>
+                </graph_prototype>
+            {% endfor %}
+        </graph_prototypes>
+    </discovery_rule>
+{%- endmacro -%}
+
+{#-#########################################################################-#}
+{#- MAIN -#}
+{#-#########################################################################-#}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>{{ version }}</version>
+    <date>2018-10-30T08:22:30Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template App Redis Sentinel</template>
+            <name>Template App Redis Sentinel</name>
+            <description/>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Redis Sentinel</name>
+                </application>
+            </applications>
+            <templates/>
+            <screens/>
+            <httptests/>
+            {% if version == '4.2' %}
+                <tags>
+                    <tag>
+                        <tag>App</tag>
+                        <value>Redis Sentinel</value>
+                    </tag>
+                </tags>
+            {% endif %}
+
+            {#-#############################################################-#}
+            {#- ITEMS -#}
+            {#-#############################################################-#}
+
+            <items>
+                {% for item in [
+                        {
+                            'name': 'stats',
+                            'key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'context': 'stats',
+                            'trends': false,
+                            'value_type': 4,
+                        },
+                        {
+                            'name': '$1 processes',
+                            'key': 'proc.num[redis-sentinel]',
+                            'context': 'proc.num-redis-sentinel',
+                            'value_type': 3,
+                        },
+                    ] %}
+                    <item>
+                        <name>Redis Sentinel - {{ item.name|e }}</name>
+                        <type>7</type>
+                        <snmp_community/>
+                        <snmp_oid/>
+                        <key>{{ item.key|e }}</key>
+                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
+                        <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                        {% if 'trends' in item and not item.trends %}
+                            <trends>0</trends>
+                        {% else %}
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                        {% endif %}
+                        <status>0</status>
+                        <value_type>{{ item.value_type }}</value_type>
+                        <allowed_hosts/>
+                        <units/>
+                        <snmpv3_contextname/>
+                        <snmpv3_securityname/>
+                        <snmpv3_securitylevel>0</snmpv3_securitylevel>
+                        <snmpv3_authprotocol>0</snmpv3_authprotocol>
+                        <snmpv3_authpassphrase/>
+                        <snmpv3_privprotocol>0</snmpv3_privprotocol>
+                        <snmpv3_privpassphrase/>
+                        <params/>
+                        <ipmi_sensor/>
+                        <authtype>0</authtype>
+                        <username/>
+                        <password/>
+                        <publickey/>
+                        <privatekey/>
+                        <port/>
+                        <description/>
+                        <inventory_link>0</inventory_link>
+                        <applications>
+                            <application>
+                                <name>Redis Sentinel</name>
+                            </application>
+                        </applications>
+                        <valuemap/>
+                        <logtimefmt/>
+                        <preprocessing/>
+                        <jmx_endpoint/>
+                        <timeout>3s</timeout>
+                        <url/>
+                        <query_fields/>
+                        <posts/>
+                        <status_codes>200</status_codes>
+                        <follow_redirects>1</follow_redirects>
+                        <post_type>0</post_type>
+                        <http_proxy/>
+                        <headers/>
+                        <retrieve_mode>0</retrieve_mode>
+                        <request_method>0</request_method>
+                        <output_format>0</output_format>
+                        <allow_traps>0</allow_traps>
+                        <ssl_cert_file/>
+                        <ssl_key_file/>
+                        <ssl_key_password/>
+                        <verify_peer>0</verify_peer>
+                        <verify_host>0</verify_host>
+                        <master_item/>
+                    </item>
+                {% endfor %}
+            </items>
+
+            {#-#############################################################-#}
+            {#- DISCOVERY RULES -#}
+            {#-#############################################################-#}
+
+            <discovery_rules>
+                {#-#########################################################-#}
+                {#- ITEMS DISCOVERY -#}
+                {#-#########################################################-#}
+
+                {{ discovery_rule(
+                    {
+                        'name': 'Items discovery',
+                        'key': 'redis_sentinel.discovery["{$REDIS_SENTINEL.LOCATIONS}","items"]',
+                        'context': 'items',
+                    },
+                    [
+                        {
+                            'name': 'sentinel:sentinel_masters',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_masters"]',
+                            'context': 'items:sentinel-sentinel_masters',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.sentinel:sentinel_masters\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'sentinel:sentinel_running_scripts',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_running_scripts"]',
+                            'context': 'items:sentinel-sentinel_running_scripts',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.sentinel:sentinel_running_scripts\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'sentinel:sentinel_scripts_queue_length',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_scripts_queue_length"]',
+                            'context': 'items:sentinel-sentinel_scripts_queue_length',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.sentinel:sentinel_scripts_queue_length\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'server:uptime_in_seconds',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"]',
+                            'context': 'items:server-uptime_in_seconds',
+                            'value_type': 3,
+                            'units': 'uptime',
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.server:uptime_in_seconds\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                    ],
+                    [
+                        {
+                            'name': 'has been restarted',
+                            'expression':
+                                '{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:items:uptime})}'
+                                '<{$REDIS_SENTINEL.UPTIME.MIN}',
+                            'priority': 4,
+                        },
+                    ],
+                    [
+                        {
+                            'name': 'Masters',
+                            'items': [
+                                {
+                                    'color': '00C800',
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_masters"]',
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'Scripts',
+                            'items': [
+                                {
+                                    'color': '00C800',
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_running_scripts"]',
+                                },
+                                {
+                                    'color': 'C80000',
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_scripts_queue_length"]',
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'Uptime',
+                            'items': [
+                                {
+                                    'color': '00C800',
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"]',
+                                },
+                            ],
+                        },
+                    ]) }}
+
+                {#-#########################################################-#}
+                {#- MASTERS DISCOVERY -#}
+                {#-#########################################################-#}
+
+                {{ discovery_rule(
+                    {
+                        'name': 'Masters discovery',
+                        'key': 'redis_sentinel.discovery["{$REDIS_SENTINEL.LOCATIONS}","masters"]',
+                        'context': 'masters',
+                    },
+                    [
+                        {
+                            'name': 'masters:{#SUBJECT}:ckquorum',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"]',
+                            'context': 'masters:masters-ckquorum',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:ckquorum\']',
+                                    'error_handler': 1,
+                                },
+                                {
+                                    'type': 6,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'masters:{#SUBJECT}:sentinels',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"]',
+                            'context': 'masters:masters-sentinels',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:sentinels\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'masters:{#SUBJECT}:slaves',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:slaves"]',
+                            'context': 'masters:masters-slaves',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:slaves\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'masters:{#SUBJECT}:status',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:status"]',
+                            'context': 'masters:masters-status',
+                            'value_type': 4,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:status\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'masters:{#SUBJECT}:usable_sentinels',
+                            'type': 18,
+                            'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"]',
+                            'context': 'masters:masters-usable_sentinels',
+                            'value_type': 3,
+                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'preprocessing': [
+                                {
+                                    'type': 12,
+                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:usable_sentinels\']',
+                                    'error_handler': 1,
+                                },
+                            ],
+                        },
+                    ],
+                    [
+                        {
+                            'name': '{#SUBJECT} cannot reach quorum',
+                            'expression':
+                                '{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"].last()}'
+                                '<>1',
+                            'priority': 4,
+                        },
+                        {
+                            'name': '{#SUBJECT} is not able to use all sentinels',
+                            'expression':
+                                '{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"].last()}'
+                                '<>{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"].last()}',
+                            'priority': 4,
+                        },
+                    ],
+                    [
+                        {
+                            'name': 'Masters[{#SUBJECT}]: quorum',
+                            'items': [
+                                {
+                                    'drawtype': 2,
+                                    'color': 'C80000',
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"]',
+                                },
+                                {
+                                    'color': '0000C8',
+                                    'yaxisside': 1,
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"]',
+                                },
+                                {
+                                    'drawtype': 1,
+                                    'color': '00C800',
+                                    'yaxisside': 1,
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"]',
+                                },
+                            ],
+                        },
+                        {
+                            'name': 'Masters[{#SUBJECT}]: slaves',
+                            'items': [
+                                {
+                                    'color': 'C80000',
+                                    'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:slaves"]',
+                                },
+                            ],
+                        },
+                    ]) }}
+            </discovery_rules>
+
+            {#-#############################################################-#}
+            {#- MACROS -#}
+            {#-#############################################################-#}
+
+            <macros>
+                {% for macro in [
+                        ('{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:stats}', '0'),
+                        ('{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}', '30d'),
+                        ('{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}', '365d'),
+                        ('{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}', '1m'),
+                        ('{$REDIS_SENTINEL.LAST_VALUES_TO_CHECK}', '#1'),
+                        ('{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
+                        ('{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}', '1h'),
+                        ('{$REDIS_SENTINEL.LOCATIONS}', ''),
+                        ('{$REDIS_SENTINEL.PROCESSES.MIN}', '1'),
+                        ('{$REDIS_SENTINEL.UPTIME.MIN}', '10m'),
+                    ] %}
+                    <macro>
+                        <macro>{{ macro[0]|e }}</macro>
+                        <value>{{ macro[1]|e }}</value>
+                    </macro>
+                {% endfor %}
+            </macros>
+        </template>
+    </templates>
+
+    {#-#####################################################################-#}
+    {#- TRIGGERS -#}
+    {#-#####################################################################-#}
+
+    <triggers>
+        {% for trigger in [
+                {
+                    'name': 'Redis Sentinel is not running',
+                    'expression':
+                        '{Template App Redis Sentinel:proc.num[redis-sentinel].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:proc.num-redis-sentinel})}'
+                        '<{$REDIS_SENTINEL.PROCESSES.MIN}',
+                },
+            ] %}
+            <trigger>
+                <expression>{{ trigger.expression|e }}</expression>
+                <recovery_mode>0</recovery_mode>
+                <recovery_expression/>
+                <name>{{ trigger.name|e }}</name>
+                <correlation_mode>0</correlation_mode>
+                <correlation_tag/>
+                <url/>
+                <status>0</status>
+                <priority>5</priority>
+                <description/>
+                <type>0</type>
+                <manual_close>0</manual_close>
+                <dependencies/>
+                <tags/>
+            </trigger>
+        {% endfor %}
+    </triggers>
+</zabbix_export>
