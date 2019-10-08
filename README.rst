@@ -9,7 +9,7 @@
     UserParameter=redis_sentinel.discovery[*],/usr/local/bin/zabbix-redis.py -i '$1' -t sentinel discover $2 2> /dev/null
     UserParameter=redis_sentinel.stats[*],/usr/local/bin/zabbix-redis.py -i '$1' -t sentinel stats 2> /dev/null
 
-3. Generate the required templates using the Jinja2 skeleton and import it::
+3. Generate the required templates using the Jinja2 skeleton and import them::
 
     $ pip install jinja2-cli
     $ jinja2 --strict -D version='{4.0,4.2}' -o template.xml template-app-redis-server.j2
