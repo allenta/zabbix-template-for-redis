@@ -2,6 +2,10 @@
 {#- HELPERS -#}
 {#-#########################################################################-#}
 
+{%- set name = name|default('Redis Sentinel') -%}
+
+{%- set master = 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]' -%}
+
 {%- macro discovery_rule(rule, items, triggers, graphs) -%}
     <discovery_rule>
         <name>{{ rule.name|e }}</name>
@@ -200,7 +204,7 @@
                                 <calc_fnc>{{ gitem.calc_fnc|default(2) }}</calc_fnc>
                                 <type>0</type>
                                 <item>
-                                    <host>Template App Redis Sentinel</host>
+                                    <host>Template App {{ name }}</host>
                                     <key>{{ gitem.key|e }}</key>
                                 </item>
                             </graph_item>
@@ -227,8 +231,8 @@
     </groups>
     <templates>
         <template>
-            <template>Template App Redis Sentinel</template>
-            <name>Template App Redis Sentinel</name>
+            <template>Template App {{ name }}</template>
+            <name>Template App {{ name }}</name>
             <description/>
             <groups>
                 <group>
@@ -260,7 +264,7 @@
                 {% for item in [
                         {
                             'name': 'stats',
-                            'key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'key': master,
                             'context': 'stats',
                             'trends': false,
                             'value_type': 4,
@@ -360,7 +364,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_masters"]',
                             'context': 'items:sentinel-sentinel_masters',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -375,7 +379,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_running_scripts"]',
                             'context': 'items:sentinel-sentinel_running_scripts',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -390,7 +394,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_scripts_queue_length"]',
                             'context': 'items:sentinel-sentinel_scripts_queue_length',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -406,7 +410,7 @@
                             'context': 'items:server-uptime_in_seconds',
                             'value_type': 3,
                             'units': 'uptime',
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -420,7 +424,7 @@
                         {
                             'name': 'has been restarted',
                             'expression':
-                                '{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:items:uptime})}'
+                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:items:uptime})}'
                                 '<{$REDIS_SENTINEL.UPTIME.MIN}',
                             'priority': 4,
                         },
@@ -476,7 +480,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"]',
                             'context': 'masters:masters-ckquorum',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -494,7 +498,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"]',
                             'context': 'masters:masters-sentinels',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -509,7 +513,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:slaves"]',
                             'context': 'masters:masters-slaves',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -524,7 +528,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:status"]',
                             'context': 'masters:masters-status',
                             'value_type': 4,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -539,7 +543,7 @@
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"]',
                             'context': 'masters:masters-usable_sentinels',
                             'value_type': 3,
-                            'master_item_key': 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]',
+                            'master_item_key': master,
                             'preprocessing': [
                                 {
                                     'type': 12,
@@ -553,15 +557,15 @@
                         {
                             'name': '{#SUBJECT} cannot reach quorum',
                             'expression':
-                                '{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"].last()}'
+                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"].last()}'
                                 '<>1',
                             'priority': 4,
                         },
                         {
                             'name': '{#SUBJECT} is not able to use all sentinels',
                             'expression':
-                                '{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"].last()}'
-                                '<>{Template App Redis Sentinel:redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"].last()}',
+                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"].last()}'
+                                '<>{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"].last()}',
                             'priority': 4,
                         },
                     ],
@@ -634,7 +638,7 @@
                 {
                     'name': 'Redis Sentinel is not running',
                     'expression':
-                        '{Template App Redis Sentinel:proc.num[redis-sentinel].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:proc.num-redis-sentinel})}'
+                        '{Template App ' + name + ':proc.num[redis-sentinel].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:proc.num-redis-sentinel})}'
                         '<{$REDIS_SENTINEL.PROCESSES.MIN}',
                 },
             ] %}
