@@ -1,4 +1,4 @@
-**This is a Zabbix template + discovery & sender script useful to monitor Redis Server & Redis Sentinel instances:**
+**This is a Zabbix template + script useful to monitor Redis Server & Redis Sentinel instances:**
 
 1. Copy ``zabbix-redis.py`` to ``/usr/local/bin/``.
 

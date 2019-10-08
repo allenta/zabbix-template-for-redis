@@ -12,7 +12,6 @@ import json
 import re
 import subprocess
 import sys
-import time
 from argparse import ArgumentParser
 
 ITEMS = {
@@ -83,55 +82,6 @@ SUBJECTS = {
         'masters': re.compile(r'^masters:([^:]+):.+$'),
     },
 }
-
-
-###############################################################################
-## 'send' COMMAND
-###############################################################################
-
-def send(options):
-    # Initializations.
-    rows = ''
-    now = int(time.time())
-
-    # Build Zabbix sender input.
-    for instance in options.redis_instances.split(','):
-        instance = instance.strip()
-        if instance:
-            items = _stats(instance, options.redis_type, options.redis_password)
-            for name, value in items.items():
-                row = '- redis_%(type)s.info["%(instance)s","%(key)s"] %(tst)d %(value)s\n' % {
-                    'type': options.redis_type,
-                    'instance': _safe_zabbix_string(instance),
-                    'key': _safe_zabbix_string(name),
-                    'tst': now,
-                    'value': value,
-                }
-                sys.stdout.write(row)
-                rows += row
-
-    # Submit metrics.
-    rc, output = _execute('zabbix_sender -T -r -i - %(config)s %(server)s %(port)s %(host)s' % {
-        'config':
-            '-c "%s"' % options.zabbix_config
-            if options.zabbix_config is not None else '',
-        'server':
-            '-z "%s"' % options.zabbix_server
-            if options.zabbix_server is not None else '',
-        'port':
-            '-p %d' % options.zabbix_port
-            if options.zabbix_port is not None else '',
-        'host':
-            '-s "%s"' % options.zabbix_host
-            if options.zabbix_host is not None else '',
-    }, stdin=rows)
-
-    # Check return code.
-    if rc == 0:
-        sys.stdout.write(output)
-    else:
-        sys.stderr.write(output)
-        sys.exit(1)
 
 
 ###############################################################################
@@ -355,29 +305,6 @@ def main():
         help='password required to access to Redis instances')
     subparsers = parser.add_subparsers(dest='command')
 
-    # Set up 'send' command.
-    subparser = subparsers.add_parser(
-        'send',
-        help='submit stats through Zabbix sender')
-    subparser.add_argument(
-        '-c', '--zabbix-config', dest='zabbix_config',
-        type=str, required=False, default=None,
-        help='the Zabbix agent configuration file to fetch the configuration '
-             'from')
-    subparser.add_argument(
-        '-z', '--zabbix-server', dest='zabbix_server',
-        type=str, required=False, default=None,
-        help='hostname or IP address of the Zabbix server / Zabbix proxy')
-    subparser.add_argument(
-        '-p', '--zabbix-port', dest='zabbix_port',
-        type=int, required=False, default=None,
-        help='port number of server trapper running on the Zabbix server / '
-             'Zabbix proxy')
-    subparser.add_argument(
-        '-s', '--zabbix-host', dest='zabbix_host',
-        type=str, required=False, default=None,
-        help='host name as registered in the Zabbix frontend')
-
     # Set up 'stats' command.
     subparser = subparsers.add_parser(
         'stats',
@@ -393,12 +320,6 @@ def main():
 
     # Parse command line arguments.
     options = parser.parse_args()
-
-    # Check required arguments.
-    if options.command == 'send':
-        if options.zabbix_config is None and options.zabbix_server is None:
-            parser.print_help()
-            sys.exit(1)
 
     # Check subject to be discovered.
     if options.command == 'discover':
