@@ -1,62 +1,203 @@
-{#-#########################################################################-#}
-{#- HELPERS -#}
-{#-#########################################################################-#}
-
 {%- set name = name|default('Redis Server') -%}
 
 {%- set master = 'redis_server.stats["{$REDIS_SERVER.LOCATIONS}"]' -%}
 
+{#-#########################################################################-#}
+{#- MACROS -#}
+{#-#########################################################################-#}
+
+{%- macro item_type(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'TRAP' -%}
+            2
+        {%- elif name == 'ZABBIX_ACTIVE' -%}
+            7
+        {%- elif name == 'CALCULATED' -%}
+            15
+        {%- elif name == 'DEPENDENT' -%}
+            18
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro item_value_type(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'FLOAT' -%}
+            0
+        {%- elif name == 'UNSIGNED' -%}
+            3
+        {%- elif name == 'TEXT' -%}
+            4
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro trigger_priority(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'WARNING' -%}
+            2
+        {%- elif name == 'HIGH' -%}
+            4
+        {%- elif name == 'DISASTER' -%}
+            5
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro preprocessing_type(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'BOOL_TO_DECIMAL' -%}
+            6
+        {%- elif name == 'CHANGE_PER_SECOND' -%}
+            10
+        {%- elif name == 'JSONPATH' -%}
+            12
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro preprocessing_error_handler(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'ORIGINAL_ERROR' -%}
+            0
+        {%- elif name == 'DISCARD_VALUE' -%}
+            1
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro graph_type(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'NORMAL' -%}
+            0
+        {%- elif name == 'STACKED' -%}
+            1
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro graph_item_drawtype(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'SINGLE_LINE' -%}
+            0
+        {%- elif name == 'FILLED_REGION' -%}
+            1
+        {%- elif name == 'BOLD_LINE' -%}
+            2
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro graph_item_yaxisside(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'LEFT' -%}
+            0
+        {%- elif name == 'RIGHT' -%}
+            1
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro graph_item_calc_fnc(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {%- if name == 'MIN' -%}
+            1
+        {%- elif name == 'AVG' -%}
+            2
+        {%- endif -%}
+    {%- endif -%}
+{%- endmacro -%}
+
+{%- macro trigger(definition) -%}
+    <expression>{{ definition.expression|e }}</expression>
+    <name>{{ definition.name|e }}</name>
+    <priority>{{ trigger_priority(definition.priority) }}</priority>
+    {% if version in ('4.0', '4.2') %}
+        <recovery_mode>0</recovery_mode>
+        <recovery_expression/>
+        <correlation_mode>0</correlation_mode>
+        <correlation_tag/>
+        <url/>
+        <status>0</status>
+        <description/>
+        <type>0</type>
+        <manual_close>0</manual_close>
+        <dependencies/>
+        <tags/>
+    {% endif %}
+{%- endmacro -%}
+
 {%- macro discovery_rule(rule, items, triggers, graphs) -%}
     <discovery_rule>
         <name>{{ rule.name|e }}</name>
-        <type>7</type>
-        <snmp_community/>
-        <snmp_oid/>
+        <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
         <key>{{ rule.key|e }}</key>
         <delay>{$REDIS_SERVER.LLD_UPDATE_INTERVAL:{{ rule.context }}}</delay>
-        <status>0</status>
-        <allowed_hosts/>
-        <snmpv3_contextname/>
-        <snmpv3_securityname/>
-        <snmpv3_securitylevel>0</snmpv3_securitylevel>
-        <snmpv3_authprotocol>0</snmpv3_authprotocol>
-        <snmpv3_authpassphrase/>
-        <snmpv3_privprotocol>0</snmpv3_privprotocol>
-        <snmpv3_privpassphrase/>
-        <params/>
-        <ipmi_sensor/>
-        <authtype>0</authtype>
-        <username/>
-        <password/>
-        <publickey/>
-        <privatekey/>
-        <port/>
-        <filter>
-            <evaltype>0</evaltype>
-            <formula/>
-            <conditions/>
-        </filter>
         <lifetime>{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD:{{ rule.context }}}</lifetime>
-        <description/>
-        <host_prototypes/>
-        <jmx_endpoint/>
-        <timeout>3s</timeout>
-        <url/>
-        <query_fields/>
-        <posts/>
-        <status_codes>200</status_codes>
-        <follow_redirects>1</follow_redirects>
-        <post_type>0</post_type>
-        <http_proxy/>
-        <headers/>
-        <retrieve_mode>0</retrieve_mode>
-        <request_method>0</request_method>
-        <allow_traps>0</allow_traps>
-        <ssl_cert_file/>
-        <ssl_key_file/>
-        <ssl_key_password/>
-        <verify_peer>0</verify_peer>
-        <verify_host>0</verify_host>
+        {% if version in ('4.0', '4.2') %}
+            <snmp_community/>
+            <snmp_oid/>
+            <status>0</status>
+            <allowed_hosts/>
+            <snmpv3_contextname/>
+            <snmpv3_securityname/>
+            <snmpv3_securitylevel>0</snmpv3_securitylevel>
+            <snmpv3_authprotocol>0</snmpv3_authprotocol>
+            <snmpv3_authpassphrase/>
+            <snmpv3_privprotocol>0</snmpv3_privprotocol>
+            <snmpv3_privpassphrase/>
+            <params/>
+            <ipmi_sensor/>
+            <authtype>0</authtype>
+            <username/>
+            <password/>
+            <publickey/>
+            <privatekey/>
+            <port/>
+            <filter>
+                <evaltype>0</evaltype>
+                <formula/>
+                <conditions/>
+            </filter>
+            <description/>
+            <host_prototypes/>
+            <jmx_endpoint/>
+            <timeout>3s</timeout>
+            <url/>
+            <query_fields/>
+            <posts/>
+            <status_codes>200</status_codes>
+            <follow_redirects>1</follow_redirects>
+            <post_type>0</post_type>
+            <http_proxy/>
+            <headers/>
+            <retrieve_mode>0</retrieve_mode>
+            <request_method>0</request_method>
+            <allow_traps>0</allow_traps>
+            <ssl_cert_file/>
+            <ssl_key_file/>
+            <ssl_key_password/>
+            <verify_peer>0</verify_peer>
+            <verify_host>0</verify_host>
+        {% endif %}
         {% if version == '4.2' %}
             <lld_macro_paths/>
             <preprocessing/>
@@ -66,9 +207,7 @@
             {% for item in items %}
                 <item_prototype>
                     <name>Redis Server[{{ '{#' }}LOCATION}] - {{ item.name|e }}</name>
-                    <type>{{ item.type }}</type>
-                    <snmp_community/>
-                    <snmp_oid/>
+                    <type>{{ item_type(item.type) }}</type>
                     <key>{{ item.key|e }}</key>
                     {% if 'delay' in item and item.delay %}
                         <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
@@ -81,218 +220,42 @@
                     {% else %}
                         <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
                     {% endif %}
-                    <status>0</status>
-                    <value_type>{{ item.value_type }}</value_type>
-                    <allowed_hosts/>
+                    <value_type>{{ item_value_type(item.value_type) }}</value_type>
                     <units>{{ item.units|default('')|e }}</units>
-                    <snmpv3_contextname/>
-                    <snmpv3_securityname/>
-                    <snmpv3_securitylevel>0</snmpv3_securitylevel>
-                    <snmpv3_authprotocol>0</snmpv3_authprotocol>
-                    <snmpv3_authpassphrase/>
-                    <snmpv3_privprotocol>0</snmpv3_privprotocol>
-                    <snmpv3_privpassphrase/>
                     <params>{{ item.params|default('')|e }}</params>
-                    <ipmi_sensor/>
-                    <authtype>0</authtype>
-                    <username/>
-                    <password/>
-                    <publickey/>
-                    <privatekey/>
-                    <port/>
-                    <description/>
-                    <inventory_link>0</inventory_link>
                     <applications>
                         <application>
                             <name>Redis Server</name>
                         </application>
                     </applications>
-                    <valuemap/>
-                    <logtimefmt/>
                     {% if 'master_item_key' in item %}
                         <master_item>
                             <key>{{ item.master_item_key|e }}</key>
                         </master_item>
-                    {% else %}
+                    {% elif version in ('4.0', '4.2') %}
                         <master_item/>
                     {% endif %}
                     {% if 'preprocessing' in item %}
                         <preprocessing>
                             {% for step in item.preprocessing %}
                                 <step>
-                                    <type>{{ step.type }}</type>
+                                    <type>{{ preprocessing_type(step.type) }}</type>
                                     <params>{{ step.params|default('')|e }}</params>
-                                    {% if version == '4.2' %}
-                                        <error_handler>{{ step.error_handler|default(0) }}</error_handler>
+                                    {% if version in ('4.2', '4.4') %}
+                                        <error_handler>{{ preprocessing_error_handler(step.error_handler|default('ORIGINAL_ERROR')) }}</error_handler>
                                         <error_handler_params/>
                                     {% endif %}
                                 </step>
                             {% endfor %}
                         </preprocessing>
-                    {% else %}
+                    {% elif version in ('4.0', '4.2') %}
                         <preprocessing/>
                     {% endif %}
-                    <jmx_endpoint/>
-                    <timeout>3s</timeout>
-                    <url/>
-                    <query_fields/>
-                    <posts/>
-                    <status_codes>200</status_codes>
-                    <follow_redirects>1</follow_redirects>
-                    <post_type>0</post_type>
-                    <http_proxy/>
-                    <headers/>
-                    <retrieve_mode>0</retrieve_mode>
-                    <request_method>0</request_method>
-                    <output_format>0</output_format>
-                    <allow_traps>0</allow_traps>
-                    <ssl_cert_file/>
-                    <ssl_key_file/>
-                    <ssl_key_password/>
-                    <verify_peer>0</verify_peer>
-                    <verify_host>0</verify_host>
-                    <application_prototypes/>
-                </item_prototype>
-            {% endfor %}
-        </item_prototypes>
-        <trigger_prototypes>
-            {% for trigger in triggers %}
-                <trigger_prototype>
-                    <expression>{{ trigger.expression|e }}</expression>
-                    <recovery_mode>0</recovery_mode>
-                    <recovery_expression/>
-                    <name>Redis Server[{{ '{#' }}LOCATION}] {{ trigger.name|e }}</name>
-                    <correlation_mode>0</correlation_mode>
-                    <correlation_tag/>
-                    <url/>
-                    <status>0</status>
-                    <priority>{{ trigger.priority }}</priority>
-                    <description/>
-                    <type>0</type>
-                    <manual_close>0</manual_close>
-                    <dependencies/>
-                    <tags/>
-                </trigger_prototype>
-            {% endfor %}
-        </trigger_prototypes>
-        <graph_prototypes>
-            {% for graph in graphs %}
-                <graph_prototype>
-                    <name>Redis Server[{{ '{#' }}LOCATION}] &gt; {{ graph.name|e }}</name>
-                    <width>900</width>
-                    <height>200</height>
-                    <yaxismin>0.0000</yaxismin>
-                    <yaxismax>100.0000</yaxismax>
-                    <show_work_period>1</show_work_period>
-                    <show_triggers>1</show_triggers>
-                    <type>{{ graph.type|default(0) }}</type>
-                    <show_legend>1</show_legend>
-                    <show_3d>0</show_3d>
-                    <percent_left>0.0000</percent_left>
-                    <percent_right>0.0000</percent_right>
-                    <ymin_type_1>0</ymin_type_1>
-                    <ymax_type_1>0</ymax_type_1>
-                    <ymin_item_1>0</ymin_item_1>
-                    <ymax_item_1>0</ymax_item_1>
-                    <graph_items>
-                        {% for gitem in graph['items'] %}
-                            <graph_item>
-                                <sortorder>{{ loop.index0 }}</sortorder>
-                                <drawtype>{{ gitem.drawtype|default(0) }}</drawtype>
-                                <color>{{ gitem.color }}</color>
-                                <yaxisside>{{ gitem.yaxisside|default(0) }}</yaxisside>
-                                <calc_fnc>{{ gitem.calc_fnc|default(2) }}</calc_fnc>
-                                <type>0</type>
-                                <item>
-                                    <host>Template App {{ name }}</host>
-                                    <key>{{ gitem.key|e }}</key>
-                                </item>
-                            </graph_item>
-                        {% endfor %}
-                    </graph_items>
-                </graph_prototype>
-            {% endfor %}
-        </graph_prototypes>
-    </discovery_rule>
-{%- endmacro -%}
-
-{#-#########################################################################-#}
-{#- MAIN -#}
-{#-#########################################################################-#}
-
-<?xml version="1.0" encoding="UTF-8"?>
-<zabbix_export>
-    <version>{{ version }}</version>
-    <date>2018-10-29T09:52:03Z</date>
-    <groups>
-        <group>
-            <name>Templates</name>
-        </group>
-    </groups>
-    <templates>
-        <template>
-            <template>Template App {{ name }}</template>
-            <name>Template App {{ name }}</name>
-            <description/>
-            <groups>
-                <group>
-                    <name>Templates</name>
-                </group>
-            </groups>
-            <applications>
-                <application>
-                    <name>Redis Server</name>
-                </application>
-            </applications>
-            <templates/>
-            <screens/>
-            <httptests/>
-            {% if version == '4.2' %}
-                <tags>
-                    <tag>
-                        <tag>App</tag>
-                        <value>Redis Server</value>
-                    </tag>
-                </tags>
-            {% endif %}
-
-            {#-#############################################################-#}
-            {#- ITEMS -#}
-            {#-#############################################################-#}
-
-            <items>
-                {% for item in [
-                        {
-                            'name': 'stats',
-                            'key': master,
-                            'context': 'stats',
-                            'trends': false,
-                            'value_type': 4,
-                        },
-                        {
-                            'name': '$1 processes',
-                            'key': 'proc.num[redis-server]',
-                            'context': 'proc.num-redis-server',
-                            'value_type': 3,
-                        },
-                    ] %}
-                    <item>
-                        <name>Redis Server - {{ item.name|e }}</name>
-                        <type>7</type>
+                    {% if version in ('4.0', '4.2') %}
                         <snmp_community/>
                         <snmp_oid/>
-                        <key>{{ item.key|e }}</key>
-                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
-                        <history>{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
-                        {% if 'trends' in item and not item.trends %}
-                            <trends>0</trends>
-                        {% else %}
-                            <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
-                        {% endif %}
                         <status>0</status>
-                        <value_type>{{ item.value_type }}</value_type>
                         <allowed_hosts/>
-                        <units/>
                         <snmpv3_contextname/>
                         <snmpv3_securityname/>
                         <snmpv3_securitylevel>0</snmpv3_securitylevel>
@@ -300,7 +263,6 @@
                         <snmpv3_authpassphrase/>
                         <snmpv3_privprotocol>0</snmpv3_privprotocol>
                         <snmpv3_privpassphrase/>
-                        <params/>
                         <ipmi_sensor/>
                         <authtype>0</authtype>
                         <username/>
@@ -310,14 +272,8 @@
                         <port/>
                         <description/>
                         <inventory_link>0</inventory_link>
-                        <applications>
-                            <application>
-                                <name>Redis Server</name>
-                            </application>
-                        </applications>
                         <valuemap/>
                         <logtimefmt/>
-                        <preprocessing/>
                         <jmx_endpoint/>
                         <timeout>3s</timeout>
                         <url/>
@@ -337,7 +293,213 @@
                         <ssl_key_password/>
                         <verify_peer>0</verify_peer>
                         <verify_host>0</verify_host>
-                        <master_item/>
+                        <application_prototypes/>
+                    {% endif %}
+                </item_prototype>
+            {% endfor %}
+        </item_prototypes>
+        <trigger_prototypes>
+            {% for definition in triggers %}
+                <trigger_prototype>
+                    {{ trigger(definition) }}
+                </trigger_prototype>
+            {% endfor %}
+        </trigger_prototypes>
+        <graph_prototypes>
+            {% for graph in graphs %}
+                <graph_prototype>
+                    <name>Redis Server[{{ '{#' }}LOCATION}] &gt; {{ graph.name|e }}</name>
+                    <type>{{ graph_type(graph.type|default('NORMAL')) }}</type>
+                    <graph_items>
+                        {% for gitem in graph['items'] %}
+                            <graph_item>
+                                <sortorder>{{ loop.index0 }}</sortorder>
+                                <drawtype>{{ graph_item_drawtype(gitem.drawtype|default('SINGLE_LINE')) }}</drawtype>
+                                <color>{{ gitem.color }}</color>
+                                <yaxisside>{{ graph_item_yaxisside(gitem.yaxisside|default('LEFT')) }}</yaxisside>
+                                <calc_fnc>{{ graph_item_calc_fnc(gitem.calc_fnc|default('AVG')) }}</calc_fnc>
+                                <item>
+                                    <host>Template App {{ name }}</host>
+                                    <key>{{ gitem.key|e }}</key>
+                                </item>
+                                {% if version in ('4.0', '4.2') %}
+                                    <type>0</type>
+                                {% endif %}
+                            </graph_item>
+                        {% endfor %}
+                    </graph_items>
+                    {% if version in ('4.0', '4.2') %}
+                        <width>900</width>
+                        <height>200</height>
+                        <yaxismin>0.0000</yaxismin>
+                        <yaxismax>100.0000</yaxismax>
+                        <show_work_period>1</show_work_period>
+                        <show_triggers>1</show_triggers>
+                        <show_legend>1</show_legend>
+                        <show_3d>0</show_3d>
+                        <percent_left>0.0000</percent_left>
+                        <percent_right>0.0000</percent_right>
+                        <ymin_type_1>0</ymin_type_1>
+                        <ymax_type_1>0</ymax_type_1>
+                        <ymin_item_1>0</ymin_item_1>
+                        <ymax_item_1>0</ymax_item_1>
+                    {% endif %}
+                </graph_prototype>
+            {% endfor %}
+        </graph_prototypes>
+    </discovery_rule>
+{%- endmacro -%}
+
+{#-#########################################################################-#}
+{#- TRIGGERS -#}
+{#-#########################################################################-#}
+
+{%- set redis_server_processes_trigger =
+    {
+        'name': 'Redis Server is not running',
+        'expression':
+            '{Template App ' + name + ':proc.num[redis-server].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:proc.num-redis-server})}'
+            '<{$REDIS_SERVER.PROCESSES.MIN}',
+        'priority': 'DISASTER',
+    } -%}
+
+{#-#########################################################################-#}
+{#- MAIN -#}
+{#-#########################################################################-#}
+
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>{{ version }}</version>
+    <date>2018-10-29T09:52:03Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template App {{ name }}</template>
+            <name>Template App {{ name }}</name>
+            {% if version in ('4.0', '4.2') %}
+                <description/>
+            {% endif %}
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Redis Server</name>
+                </application>
+            </applications>
+            <templates/>
+            <screens/>
+            <httptests/>
+            {% if version in ('4.2', '4.4') %}
+                <tags>
+                    <tag>
+                        <tag>App</tag>
+                        <value>Redis Server</value>
+                    </tag>
+                </tags>
+            {% endif %}
+
+            {#-#############################################################-#}
+            {#- ITEMS -#}
+            {#-#############################################################-#}
+
+            <items>
+                {% for item in [
+                        {
+                            'name': 'stats',
+                            'key': master,
+                            'context': 'stats',
+                            'trends': false,
+                            'value_type': 'TEXT',
+                            'triggers': [],
+                        },
+                        {
+                            'name': '$1 processes',
+                            'key': 'proc.num[redis-server]',
+                            'context': 'proc.num-redis-server',
+                            'value_type': 'UNSIGNED',
+                            'triggers': [redis_server_processes_trigger],
+                        },
+                    ] %}
+                    <item>
+                        <name>Redis Server - {{ item.name|e }}</name>
+                        <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
+                        <key>{{ item.key|e }}</key>
+                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
+                        <history>{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                        {% if 'trends' in item and not item.trends %}
+                            <trends>0</trends>
+                        {% else %}
+                            <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                        {% endif %}
+                        <value_type>{{ item_value_type(item.value_type) }}</value_type>
+                        <applications>
+                            <application>
+                                <name>Redis Server</name>
+                            </application>
+                        </applications>
+                        {% if version in ('4.0', '4.2') %}
+                            <snmp_community/>
+                            <snmp_oid/>
+                            <status>0</status>
+                            <allowed_hosts/>
+                            <units/>
+                            <snmpv3_contextname/>
+                            <snmpv3_securityname/>
+                            <snmpv3_securitylevel>0</snmpv3_securitylevel>
+                            <snmpv3_authprotocol>0</snmpv3_authprotocol>
+                            <snmpv3_authpassphrase/>
+                            <snmpv3_privprotocol>0</snmpv3_privprotocol>
+                            <snmpv3_privpassphrase/>
+                            <params/>
+                            <ipmi_sensor/>
+                            <authtype>0</authtype>
+                            <username/>
+                            <password/>
+                            <publickey/>
+                            <privatekey/>
+                            <port/>
+                            <description/>
+                            <inventory_link>0</inventory_link>
+                            <valuemap/>
+                            <logtimefmt/>
+                            <preprocessing/>
+                            <jmx_endpoint/>
+                            <timeout>3s</timeout>
+                            <url/>
+                            <query_fields/>
+                            <posts/>
+                            <status_codes>200</status_codes>
+                            <follow_redirects>1</follow_redirects>
+                            <post_type>0</post_type>
+                            <http_proxy/>
+                            <headers/>
+                            <retrieve_mode>0</retrieve_mode>
+                            <request_method>0</request_method>
+                            <output_format>0</output_format>
+                            <allow_traps>0</allow_traps>
+                            <ssl_cert_file/>
+                            <ssl_key_file/>
+                            <ssl_key_password/>
+                            <verify_peer>0</verify_peer>
+                            <verify_host>0</verify_host>
+                            <master_item/>
+                        {% endif %}
+                        {% if version == '4.4' and item.triggers %}
+                            <triggers>
+                                {% for definition in item.triggers %}
+                                    <trigger>
+                                        {{ trigger(definition) }}
+                                    </trigger>
+                                {% endfor %}
+                            </triggers>
+                        {% endif %}
                     </item>
                 {% endfor %}
             </items>
@@ -360,725 +522,725 @@
                     [
                         {
                             'name': 'clients:blocked_clients',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","clients:blocked_clients"]',
                             'context': 'items:clients-blocked_clients',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.clients:blocked_clients\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'clients:connected_clients',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","clients:connected_clients"]',
                             'context': 'items:clients-connected_clients',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.clients:connected_clients\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_known_nodes',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_known_nodes"]',
                             'context': 'items:cluster-cluster_known_nodes',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_known_nodes\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_size',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_size"]',
                             'context': 'items:cluster-cluster_size',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_size\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_slots_assigned',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_assigned"]',
                             'context': 'items:cluster-cluster_slots_assigned',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_slots_assigned\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_slots_fail',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_fail"]',
                             'context': 'items:cluster-cluster_slots_fail',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_slots_fail\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_slots_ok',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_ok"]',
                             'context': 'items:cluster-cluster_slots_ok',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_slots_ok\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_slots_pfail',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_pfail"]',
                             'context': 'items:cluster-cluster_slots_pfail',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_slots_pfail\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cluster:cluster_state',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_state"]',
                             'context': 'items:cluster-cluster_state',
                             'trends': false,
-                            'value_type': 4,
+                            'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cluster:cluster_state\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'cpu:used_cpu_sys',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_sys"]',
                             'context': 'items:cpu-used_cpu_sys',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cpu:used_cpu_sys\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'cpu:used_cpu_sys_children',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_sys_children"]',
                             'context': 'items:cpu-used_cpu_sys_children',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cpu:used_cpu_sys_children\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'cpu:used_cpu_user',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_user"]',
                             'context': 'items:cpu-used_cpu_user',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cpu:used_cpu_user\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'cpu:used_cpu_user_children',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_user_children"]',
                             'context': 'items:cpu-used_cpu_user_children',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.cpu:used_cpu_user_children\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'hit_ratio',
-                            'type': 15,
+                            'type': 'CALCULATED',
                             'key': 'redis_server.info["{#LOCATION_ID}","hit_ratio"]',
                             'context': 'items:hit_ratio',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': '%',
                             'delay': true,
                             'params': '100*last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]")/(last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]")+last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_misses\\"]")+(count("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]",#1,0)*count("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_misses\\"]",#1,0)))',
                         },
                         {
                             'name': 'memory:mem_fragmentation_ratio',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:mem_fragmentation_ratio"]',
                             'context': 'items:memory-mem_fragmentation_ratio',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.memory:mem_fragmentation_ratio\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'memory:used_memory',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory"]',
                             'context': 'items:memory-used_memory',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'units': 'B',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.memory:used_memory\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'memory:used_memory_lua',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory_lua"]',
                             'context': 'items:memory-used_memory_lua',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'units': 'B',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.memory:used_memory_lua\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'memory:used_memory_rss',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory_rss"]',
                             'context': 'items:memory-used_memory_rss',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'units': 'B',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.memory:used_memory_rss\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:aof_last_bgrewrite_status',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_bgrewrite_status"]',
                             'context': 'items:persistence-aof_last_bgrewrite_status',
                             'trends': false,
-                            'value_type': 4,
+                            'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:aof_last_bgrewrite_status\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:aof_last_rewrite_time_sec',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_rewrite_time_sec"]',
                             'context': 'items:persistence-aof_last_rewrite_time_sec',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:aof_last_rewrite_time_sec\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:aof_last_write_status',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_write_status"]',
                             'context': 'items:persistence-aof_last_write_status',
                             'trends': false,
-                            'value_type': 4,
+                            'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:aof_last_write_status\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:rdb_changes_since_last_save',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_changes_since_last_save"]',
                             'context': 'items:persistence-rdb_changes_since_last_save',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:rdb_changes_since_last_save\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:rdb_last_bgsave_status',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_bgsave_status"]',
                             'context': 'items:persistence-rdb_last_bgsave_status',
                             'trends': false,
-                            'value_type': 4,
+                            'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:rdb_last_bgsave_status\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:rdb_last_bgsave_time_sec',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_bgsave_time_sec"]',
                             'context': 'items:persistence-rdb_last_bgsave_time_sec',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:rdb_last_bgsave_time_sec\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'persistence:rdb_last_save_time',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_save_time"]',
                             'context': 'items:persistence-rdb_last_save_time',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'units': 'unixtime',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.persistence:rdb_last_save_time\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'replication:connected_slaves',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","replication:connected_slaves"]',
                             'context': 'items:replication-connected_slaves',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.replication:connected_slaves\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'replication:role',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","replication:role"]',
                             'context': 'items:replication-role',
                             'trends': false,
-                            'value_type': 4,
+                            'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.replication:role\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'server:uptime_in_seconds',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"]',
                             'context': 'items:server-uptime_in_seconds',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'units': 'uptime',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.server:uptime_in_seconds\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:evicted_keys',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:evicted_keys"]',
                             'context': 'items:stats-evicted_keys',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:evicted_keys\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:expired_keys',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:expired_keys"]',
                             'context': 'items:stats-expired_keys',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:expired_keys\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:keyspace_hits',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:keyspace_hits"]',
                             'context': 'items:stats-keyspace_hits',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:keyspace_hits\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:keyspace_misses',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:keyspace_misses"]',
                             'context': 'items:stats-keyspace_misses',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:keyspace_misses\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:pubsub_channels',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:pubsub_channels"]',
                             'context': 'items:stats-pubsub_channels',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:pubsub_channels\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:pubsub_patterns',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:pubsub_patterns"]',
                             'context': 'items:stats-pubsub_patterns',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:pubsub_patterns\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:rejected_connections',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:rejected_connections"]',
                             'context': 'items:stats-rejected_connections',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:rejected_connections\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:sync_full',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_full"]',
                             'context': 'items:stats-sync_full',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:sync_full\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:sync_partial_err',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_partial_err"]',
                             'context': 'items:stats-sync_partial_err',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:sync_partial_err\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:sync_partial_ok',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_partial_ok"]',
                             'context': 'items:stats-sync_partial_ok',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:sync_partial_ok\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:total_commands_processed',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_commands_processed"]',
                             'context': 'items:stats-total_commands_processed',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:total_commands_processed\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:total_connections_received',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_connections_received"]',
                             'context': 'items:stats-total_connections_received',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:total_connections_received\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:total_net_input_bytes',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_net_input_bytes"]',
                             'context': 'items:stats-total_net_input_bytes',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'Bps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:total_net_input_bytes\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'stats:total_net_output_bytes',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_net_output_bytes"]',
                             'context': 'items:stats-total_net_output_bytes',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'Bps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.stats:total_net_output_bytes\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                     ],
                     [
                         {
-                            'name': 'has been restarted',
+                            'name': 'Redis Server[{#LOCATION}] has been restarted',
                             'expression':
                                 '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:items:server:uptime_in_seconds})}'
                                 '<{$REDIS_SERVER.UPTIME.MIN}',
-                            'priority': 4,
+                            'priority': 'HIGH',
                         },
                         {
-                            'name': 'is a master without slaves',
+                            'name': 'Redis Server[{#LOCATION}] is a master without slaves',
                             'expression':
                                 '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:role"].str(master)}=1'
                                 ' and {Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:connected_slaves"].last()}=0',
-                            'priority': 4,
+                            'priority': 'HIGH',
                         },
                         {
-                            'name': 'is evicting keys',
+                            'name': 'Redis Server[{#LOCATION}] is evicting keys',
                             'expression':
                                 '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].min({$REDIS_SERVER.LAST_VALUES_TO_CHECK:items:stats:evicted_keys})}'
                                 '>{$REDIS_SERVER.EVICTED_KEYS.MAX}',
-                            'priority': 4,
+                            'priority': 'HIGH',
                         },
                     ],
                     [
@@ -1153,7 +1315,7 @@
                         },
                         {
                             'name': 'CPU: children usage',
-                            'type': 1,
+                            'type': 'STACKED',
                             'items': [
                                 {
                                     'color': 'C80000',
@@ -1167,7 +1329,7 @@
                         },
                         {
                             'name': 'CPU: parent usage',
-                            'type': 1,
+                            'type': 'STACKED',
                             'items': [
                                 {
                                     'color': 'C80000',
@@ -1205,8 +1367,7 @@
                                 },
                                 {
                                     'color': '0000C8',
-                                    'yaxisside': 1,
-                                    'type': 0,
+                                    'yaxisside': 'RIGHT',
                                     'key': 'redis_server.info["{#LOCATION_ID}","hit_ratio"]',
                                 },
                             ],
@@ -1244,7 +1405,7 @@
                         },
                         {
                             'name': 'Networking',
-                            'type': 1,
+                            'type': 'STACKED',
                             'items': [
                                 {
                                     'color': '00C800',
@@ -1346,46 +1507,46 @@
                     [
                         {
                             'name': 'keyspace:{#SUBJECT}:avg_ttl',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:avg_ttl"]',
                             'context': 'keyspace:avg_ttl',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.keyspace:{#SUBJECT_ID}:avg_ttl\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'keyspace:{#SUBJECT}:expires',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:expires"]',
                             'context': 'keyspace:expires',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.keyspace:{#SUBJECT_ID}:expires\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
                         {
                             'name': 'keyspace:{#SUBJECT}:keys',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:keys"]',
                             'context': 'keyspace:keys',
-                            'value_type': 3,
+                            'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.keyspace:{#SUBJECT_ID}:keys\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         },
@@ -1426,35 +1587,35 @@
                     [
                         {
                             'name': 'commandstats:{#SUBJECT}:calls',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","commandstats:{#SUBJECT}:calls"]',
                             'context': 'commandstats:calls',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.commandstats:{#SUBJECT}:calls\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
-                                    'type': 10,
+                                    'type': 'CHANGE_PER_SECOND',
                                 },
                             ],
                         },
                         {
                             'name': 'commandstats:{#SUBJECT}:usec_per_call',
-                            'type': 18,
+                            'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","commandstats:{#SUBJECT}:usec_per_call"]',
                             'context': 'commandstats:user_per_call',
-                            'value_type': 0,
+                            'value_type': 'FLOAT',
                             'master_item_key': master,
                             'preprocessing': [
                                 {
-                                    'type': 12,
+                                    'type': 'JSONPATH',
                                     'params': '$[\'{#LOCATION_ID}.commandstats:{#SUBJECT}:usec_per_call\']',
-                                    'error_handler': 1,
+                                    'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
                         }
@@ -1514,31 +1675,15 @@
     {#- TRIGGERS -#}
     {#-#####################################################################-#}
 
-    <triggers>
-        {% for trigger in [
-                {
-                    'name': 'Redis Server is not running',
-                    'expression':
-                        '{Template App ' + name + ':proc.num[redis-server].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:proc.num-redis-server})}'
-                        '<{$REDIS_SERVER.PROCESSES.MIN}',
-                },
-            ] %}
-            <trigger>
-                <expression>{{ trigger.expression|e }}</expression>
-                <recovery_mode>0</recovery_mode>
-                <recovery_expression/>
-                <name>{{ trigger.name|e }}</name>
-                <correlation_mode>0</correlation_mode>
-                <correlation_tag/>
-                <url/>
-                <status>0</status>
-                <priority>5</priority>
-                <description/>
-                <type>0</type>
-                <manual_close>0</manual_close>
-                <dependencies/>
-                <tags/>
-            </trigger>
-        {% endfor %}
-    </triggers>
+    {% if version in ('4.0', '4.2') %}
+        <triggers>
+            {% for definition in [
+                    redis_server_processes_trigger,
+                ] %}
+                <trigger>
+                    {{ trigger(definition) }}
+                </trigger>
+            {% endfor %}
+        </triggers>
+    {% endif %}
 </zabbix_export>
