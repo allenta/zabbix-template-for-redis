@@ -10,15 +10,12 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'TRAP' -%}
-            2
-        {%- elif name == 'ZABBIX_ACTIVE' -%}
-            7
-        {%- elif name == 'CALCULATED' -%}
-            15
-        {%- elif name == 'DEPENDENT' -%}
-            18
-        {%- endif -%}
+        {{ {
+            'TRAP': 2,
+            'ZABBIX_ACTIVE': 7,
+            'CALCULATED': 15,
+            'DEPENDENT': 18,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -26,13 +23,12 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'FLOAT' -%}
-            0
-        {%- elif name == 'UNSIGNED' -%}
-            3
-        {%- elif name == 'TEXT' -%}
-            4
-        {%- endif -%}
+        {{ {
+            'FLOAT': 0,
+            'UNSIGNED': 3,
+            'TEXT': 4,
+            'DEPENDENT': 18,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -40,13 +36,11 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'WARNING' -%}
-            2
-        {%- elif name == 'HIGH' -%}
-            4
-        {%- elif name == 'DISASTER' -%}
-            5
-        {%- endif -%}
+        {{ {
+            'WARNING': 2,
+            'HIGH': 4,
+            'DISASTER': 5,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -54,13 +48,11 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'BOOL_TO_DECIMAL' -%}
-            6
-        {%- elif name == 'CHANGE_PER_SECOND' -%}
-            10
-        {%- elif name == 'JSONPATH' -%}
-            12
-        {%- endif -%}
+        {{ {
+            'BOOL_TO_DECIMAL': 6,
+            'CHANGE_PER_SECOND': 10,
+            'JSONPATH': 12,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -68,11 +60,10 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'ORIGINAL_ERROR' -%}
-            0
-        {%- elif name == 'DISCARD_VALUE' -%}
-            1
-        {%- endif -%}
+        {{ {
+            'ORIGINAL_ERROR': 0,
+            'DISCARD_VALUE': 1,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -80,11 +71,10 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'NORMAL' -%}
-            0
-        {%- elif name == 'STACKED' -%}
-            1
-        {%- endif -%}
+        {{ {
+            'NORMAL': 0,
+            'STACKED': 1,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -92,13 +82,11 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'SINGLE_LINE' -%}
-            0
-        {%- elif name == 'FILLED_REGION' -%}
-            1
-        {%- elif name == 'BOLD_LINE' -%}
-            2
-        {%- endif -%}
+        {{ {
+            'SINGLE_LINE': 0,
+            'FILLED_REGION': 1,
+            'BOLD_LINE': 2,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -106,11 +94,10 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'LEFT' -%}
-            0
-        {%- elif name == 'RIGHT' -%}
-            1
-        {%- endif -%}
+        {{ {
+            'LEFT': 0,
+            'RIGHT': 1,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -118,11 +105,10 @@
     {%- if version == '4.4' -%}
         {{ name }}
     {%- else -%}
-        {%- if name == 'MIN' -%}
-            1
-        {%- elif name == 'AVG' -%}
-            2
-        {%- endif -%}
+        {{ {
+            'MIN': 1,
+            'AVG': 2,
+        }[name] }}
     {%- endif -%}
 {%- endmacro -%}
 
