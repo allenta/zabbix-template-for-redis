@@ -136,8 +136,8 @@
         <name>{{ rule.name|e }}</name>
         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
         <key>{{ rule.key|e }}</key>
-        <delay>{$REDIS_SERVER.LLD_UPDATE_INTERVAL:{{ rule.context }}}</delay>
-        <lifetime>{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD:{{ rule.context }}}</lifetime>
+        <delay>{$REDIS_SERVER.LLD_UPDATE_INTERVAL:&quot;{{ rule.context }}&quot;}</delay>
+        <lifetime>{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD:&quot;{{ rule.context }}&quot;}</lifetime>
         {% if version in ('4.0', '4.2') %}
             <snmp_community/>
             <snmp_oid/>
@@ -196,15 +196,19 @@
                     <type>{{ item_type(item.type) }}</type>
                     <key>{{ item.key|e }}</key>
                     {% if 'delay' in item and item.delay %}
-                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
+                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}</delay>
                     {% else %}
                         <delay>0</delay>
                     {% endif %}
-                    <history>{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                    {% if 'history' in item and not item.history %}
+                        <history>0</history>
+                    {% else %}
+                        <history>{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD}</history>
+                    {% endif %}
                     {% if 'trends' in item and not item.trends %}
                         <trends>0</trends>
                     {% else %}
-                        <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                        <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD}</trends>
                     {% endif %}
                     <value_type>{{ item_value_type(item.value_type) }}</value_type>
                     <units>{{ item.units|default('')|e }}</units>
@@ -344,7 +348,7 @@
     {
         'name': 'Redis Server is not running',
         'expression':
-            '{Template App ' + name + ':proc.num[redis-server].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:proc.num-redis-server})}'
+            '{Template App ' + name + ':proc.num[redis-server].max(#1)}'
             '<{$REDIS_SERVER.PROCESSES.MIN}',
         'priority': 'DISASTER',
     } -%}
@@ -400,7 +404,7 @@
                         {
                             'name': 'stats',
                             'key': master,
-                            'context': 'stats',
+                            'history': false,
                             'trends': false,
                             'value_type': 'TEXT',
                             'triggers': [],
@@ -408,7 +412,6 @@
                         {
                             'name': '$1 processes',
                             'key': 'proc.num[redis-server]',
-                            'context': 'proc.num-redis-server',
                             'value_type': 'UNSIGNED',
                             'triggers': [redis_server_processes_trigger],
                         },
@@ -417,12 +420,17 @@
                         <name>Redis Server - {{ item.name|e }}</name>
                         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
                         <key>{{ item.key|e }}</key>
-                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
-                        <history>{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}</delay>
+                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}</delay>
+                        {% if 'history' in item and not item.history %}
+                            <history>0</history>
+                        {% else %}
+                            <history>{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD}</history>
+                        {% endif %}
                         {% if 'trends' in item and not item.trends %}
                             <trends>0</trends>
                         {% else %}
-                            <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                            <trends>{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD}</trends>
                         {% endif %}
                         <value_type>{{ item_value_type(item.value_type) }}</value_type>
                         <applications>
@@ -510,7 +518,6 @@
                             'name': 'clients:blocked_clients',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","clients:blocked_clients"]',
-                            'context': 'items:clients-blocked_clients',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -525,7 +532,6 @@
                             'name': 'clients:connected_clients',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","clients:connected_clients"]',
-                            'context': 'items:clients-connected_clients',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -540,7 +546,6 @@
                             'name': 'cluster:cluster_known_nodes',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_known_nodes"]',
-                            'context': 'items:cluster-cluster_known_nodes',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -555,7 +560,6 @@
                             'name': 'cluster:cluster_size',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_size"]',
-                            'context': 'items:cluster-cluster_size',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -570,7 +574,6 @@
                             'name': 'cluster:cluster_slots_assigned',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_assigned"]',
-                            'context': 'items:cluster-cluster_slots_assigned',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -585,7 +588,6 @@
                             'name': 'cluster:cluster_slots_fail',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_fail"]',
-                            'context': 'items:cluster-cluster_slots_fail',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -600,7 +602,6 @@
                             'name': 'cluster:cluster_slots_ok',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_ok"]',
-                            'context': 'items:cluster-cluster_slots_ok',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -615,7 +616,6 @@
                             'name': 'cluster:cluster_slots_pfail',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_pfail"]',
-                            'context': 'items:cluster-cluster_slots_pfail',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -630,7 +630,6 @@
                             'name': 'cluster:cluster_state',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_state"]',
-                            'context': 'items:cluster-cluster_state',
                             'trends': false,
                             'value_type': 'TEXT',
                             'master_item_key': master,
@@ -646,7 +645,6 @@
                             'name': 'cpu:used_cpu_sys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_sys"]',
-                            'context': 'items:cpu-used_cpu_sys',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -665,7 +663,6 @@
                             'name': 'cpu:used_cpu_sys_children',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_sys_children"]',
-                            'context': 'items:cpu-used_cpu_sys_children',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -684,7 +681,6 @@
                             'name': 'cpu:used_cpu_user',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_user"]',
-                            'context': 'items:cpu-used_cpu_user',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -703,7 +699,6 @@
                             'name': 'cpu:used_cpu_user_children',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_user_children"]',
-                            'context': 'items:cpu-used_cpu_user_children',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -722,7 +717,6 @@
                             'name': 'hit_ratio',
                             'type': 'CALCULATED',
                             'key': 'redis_server.info["{#LOCATION_ID}","hit_ratio"]',
-                            'context': 'items:hit_ratio',
                             'value_type': 'FLOAT',
                             'units': '%',
                             'delay': true,
@@ -732,7 +726,6 @@
                             'name': 'memory:mem_fragmentation_ratio',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:mem_fragmentation_ratio"]',
-                            'context': 'items:memory-mem_fragmentation_ratio',
                             'value_type': 'FLOAT',
                             'master_item_key': master,
                             'preprocessing': [
@@ -747,7 +740,6 @@
                             'name': 'memory:used_memory',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory"]',
-                            'context': 'items:memory-used_memory',
                             'value_type': 'UNSIGNED',
                             'units': 'B',
                             'master_item_key': master,
@@ -763,7 +755,6 @@
                             'name': 'memory:used_memory_lua',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory_lua"]',
-                            'context': 'items:memory-used_memory_lua',
                             'value_type': 'UNSIGNED',
                             'units': 'B',
                             'master_item_key': master,
@@ -779,7 +770,6 @@
                             'name': 'memory:used_memory_rss',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory_rss"]',
-                            'context': 'items:memory-used_memory_rss',
                             'value_type': 'UNSIGNED',
                             'units': 'B',
                             'master_item_key': master,
@@ -795,7 +785,6 @@
                             'name': 'persistence:aof_last_bgrewrite_status',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_bgrewrite_status"]',
-                            'context': 'items:persistence-aof_last_bgrewrite_status',
                             'trends': false,
                             'value_type': 'TEXT',
                             'master_item_key': master,
@@ -811,7 +800,6 @@
                             'name': 'persistence:aof_last_rewrite_time_sec',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_rewrite_time_sec"]',
-                            'context': 'items:persistence-aof_last_rewrite_time_sec',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -826,7 +814,6 @@
                             'name': 'persistence:aof_last_write_status',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_write_status"]',
-                            'context': 'items:persistence-aof_last_write_status',
                             'trends': false,
                             'value_type': 'TEXT',
                             'master_item_key': master,
@@ -842,7 +829,6 @@
                             'name': 'persistence:rdb_changes_since_last_save',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_changes_since_last_save"]',
-                            'context': 'items:persistence-rdb_changes_since_last_save',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -857,7 +843,6 @@
                             'name': 'persistence:rdb_last_bgsave_status',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_bgsave_status"]',
-                            'context': 'items:persistence-rdb_last_bgsave_status',
                             'trends': false,
                             'value_type': 'TEXT',
                             'master_item_key': master,
@@ -873,7 +858,6 @@
                             'name': 'persistence:rdb_last_bgsave_time_sec',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_bgsave_time_sec"]',
-                            'context': 'items:persistence-rdb_last_bgsave_time_sec',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -888,7 +872,6 @@
                             'name': 'persistence:rdb_last_save_time',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_save_time"]',
-                            'context': 'items:persistence-rdb_last_save_time',
                             'value_type': 'UNSIGNED',
                             'units': 'unixtime',
                             'master_item_key': master,
@@ -904,7 +887,6 @@
                             'name': 'replication:connected_slaves',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","replication:connected_slaves"]',
-                            'context': 'items:replication-connected_slaves',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -919,7 +901,6 @@
                             'name': 'replication:role',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","replication:role"]',
-                            'context': 'items:replication-role',
                             'trends': false,
                             'value_type': 'TEXT',
                             'master_item_key': master,
@@ -935,7 +916,6 @@
                             'name': 'server:uptime_in_seconds',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"]',
-                            'context': 'items:server-uptime_in_seconds',
                             'value_type': 'UNSIGNED',
                             'units': 'uptime',
                             'master_item_key': master,
@@ -951,7 +931,6 @@
                             'name': 'stats:evicted_keys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:evicted_keys"]',
-                            'context': 'items:stats-evicted_keys',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -970,7 +949,6 @@
                             'name': 'stats:expired_keys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:expired_keys"]',
-                            'context': 'items:stats-expired_keys',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -989,7 +967,6 @@
                             'name': 'stats:keyspace_hits',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:keyspace_hits"]',
-                            'context': 'items:stats-keyspace_hits',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1008,7 +985,6 @@
                             'name': 'stats:keyspace_misses',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:keyspace_misses"]',
-                            'context': 'items:stats-keyspace_misses',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1027,7 +1003,6 @@
                             'name': 'stats:pubsub_channels',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:pubsub_channels"]',
-                            'context': 'items:stats-pubsub_channels',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -1042,7 +1017,6 @@
                             'name': 'stats:pubsub_patterns',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:pubsub_patterns"]',
-                            'context': 'items:stats-pubsub_patterns',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -1057,7 +1031,6 @@
                             'name': 'stats:rejected_connections',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:rejected_connections"]',
-                            'context': 'items:stats-rejected_connections',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1076,7 +1049,6 @@
                             'name': 'stats:sync_full',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_full"]',
-                            'context': 'items:stats-sync_full',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1095,7 +1067,6 @@
                             'name': 'stats:sync_partial_err',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_partial_err"]',
-                            'context': 'items:stats-sync_partial_err',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1114,7 +1085,6 @@
                             'name': 'stats:sync_partial_ok',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_partial_ok"]',
-                            'context': 'items:stats-sync_partial_ok',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1133,7 +1103,6 @@
                             'name': 'stats:total_commands_processed',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_commands_processed"]',
-                            'context': 'items:stats-total_commands_processed',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1152,7 +1121,6 @@
                             'name': 'stats:total_connections_received',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_connections_received"]',
-                            'context': 'items:stats-total_connections_received',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1171,7 +1139,6 @@
                             'name': 'stats:total_net_input_bytes',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_net_input_bytes"]',
-                            'context': 'items:stats-total_net_input_bytes',
                             'value_type': 'FLOAT',
                             'units': 'Bps',
                             'master_item_key': master,
@@ -1190,7 +1157,6 @@
                             'name': 'stats:total_net_output_bytes',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_net_output_bytes"]',
-                            'context': 'items:stats-total_net_output_bytes',
                             'value_type': 'FLOAT',
                             'units': 'Bps',
                             'master_item_key': master,
@@ -1210,8 +1176,8 @@
                         {
                             'name': 'Redis Server[{#LOCATION}] has been restarted',
                             'expression':
-                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"].max({$REDIS_SERVER.LAST_VALUES_TO_CHECK:items:server:uptime_in_seconds})}'
-                                '<{$REDIS_SERVER.UPTIME.MIN}',
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"].max(#1)}'
+                                '<{$REDIS_SERVER.UPTIME.MIN:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
                         },
                         {
@@ -1224,8 +1190,8 @@
                         {
                             'name': 'Redis Server[{#LOCATION}] is evicting keys',
                             'expression':
-                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].min({$REDIS_SERVER.LAST_VALUES_TO_CHECK:items:stats:evicted_keys})}'
-                                '>{$REDIS_SERVER.EVICTED_KEYS.MAX}',
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].min(#1)}'
+                                '>{$REDIS_SERVER.EVICTED_KEYS.MAX:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
                         },
                     ],
@@ -1495,7 +1461,6 @@
                             'name': 'keyspace:{#SUBJECT}:avg_ttl',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:avg_ttl"]',
-                            'context': 'keyspace:avg_ttl',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -1510,7 +1475,6 @@
                             'name': 'keyspace:{#SUBJECT}:expires',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:expires"]',
-                            'context': 'keyspace:expires',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -1525,7 +1489,6 @@
                             'name': 'keyspace:{#SUBJECT}:keys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:keys"]',
-                            'context': 'keyspace:keys',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -1575,7 +1538,6 @@
                             'name': 'commandstats:{#SUBJECT}:calls',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","commandstats:{#SUBJECT}:calls"]',
-                            'context': 'commandstats:calls',
                             'value_type': 'FLOAT',
                             'units': 'eps',
                             'master_item_key': master,
@@ -1594,7 +1556,6 @@
                             'name': 'commandstats:{#SUBJECT}:usec_per_call',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","commandstats:{#SUBJECT}:usec_per_call"]',
-                            'context': 'commandstats:user_per_call',
                             'value_type': 'FLOAT',
                             'master_item_key': master,
                             'preprocessing': [
@@ -1636,16 +1597,19 @@
 
             <macros>
                 {% for macro in [
-                        ('{$REDIS_SERVER.EVICTED_KEYS.MAX}', '0.0'),
-                        ('{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD:stats}', '0'),
+                        ('{$REDIS_SERVER.LOCATIONS}', ''),
+
+                        ('{$REDIS_SERVER.PROCESSES.MIN}', '1'),
+
+                        ('{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
+                        ('{$REDIS_SERVER.LLD_UPDATE_INTERVAL}', '1h'),
+
                         ('{$REDIS_SERVER.ITEM_HISTORY_STORAGE_PERIOD}', '30d'),
                         ('{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD}', '365d'),
                         ('{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}', '1m'),
-                        ('{$REDIS_SERVER.LAST_VALUES_TO_CHECK}', '#1'),
-                        ('{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
-                        ('{$REDIS_SERVER.LLD_UPDATE_INTERVAL}', '1h'),
-                        ('{$REDIS_SERVER.LOCATIONS}', ''),
-                        ('{$REDIS_SERVER.PROCESSES.MIN}', '1'),
+
+
+                        ('{$REDIS_SERVER.EVICTED_KEYS.MAX}', '0.0'),
                         ('{$REDIS_SERVER.UPTIME.MIN}', '10m'),
                     ] %}
                     <macro>

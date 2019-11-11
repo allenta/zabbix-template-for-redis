@@ -136,8 +136,8 @@
         <name>{{ rule.name|e }}</name>
         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
         <key>{{ rule.key|e }}</key>
-        <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:{{ rule.context }}}</delay>
-        <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:{{ rule.context }}}</lifetime>
+        <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:&quot;{{ rule.context }}&quot;}</delay>
+        <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:&quot;{{ rule.context }}&quot;}</lifetime>
         {% if version in ('4.0', '4.2') %}
             <snmp_community/>
             <snmp_oid/>
@@ -196,15 +196,19 @@
                     <type>{{ item_type(item.type) }}</type>
                     <key>{{ item.key|e }}</key>
                     {% if 'delay' in item and item.delay %}
-                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
+                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</delay>
                     {% else %}
                         <delay>0</delay>
                     {% endif %}
-                    <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                    {% if 'history' in item and not item.history %}
+                        <history>0</history>
+                    {% else %}
+                        <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</history>
+                    {% endif %}
                     {% if 'trends' in item and not item.trends %}
                         <trends>0</trends>
                     {% else %}
-                        <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                        <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                     {% endif %}
                     <value_type>{{ item_value_type(item.value_type) }}</value_type>
                     <units>{{ item.units|default('')|e }}</units>
@@ -344,7 +348,7 @@
     {
         'name': 'Redis Sentinel is not running',
         'expression':
-            '{Template App ' + name + ':proc.num[redis-sentinel].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:proc.num-redis-sentinel})}'
+            '{Template App ' + name + ':proc.num[redis-sentinel].max(#1)}'
             '<{$REDIS_SENTINEL.PROCESSES.MIN}',
         'priority': 'DISASTER',
     } -%}
@@ -400,7 +404,7 @@
                         {
                             'name': 'stats',
                             'key': master,
-                            'context': 'stats',
+                            'history': false,
                             'trends': false,
                             'value_type': 'TEXT',
                             'triggers': [],
@@ -408,7 +412,6 @@
                         {
                             'name': '$1 processes',
                             'key': 'proc.num[redis-sentinel]',
-                            'context': 'proc.num-redis-sentinel',
                             'value_type': 'UNSIGNED',
                             'triggers': [redis_sentinel_processes_trigger],
                         },
@@ -417,12 +420,17 @@
                         <name>Redis Sentinel - {{ item.name|e }}</name>
                         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
                         <key>{{ item.key|e }}</key>
-                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL:{{ item.context }}}</delay>
-                        <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:{{ item.context }}}</history>
+                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</delay>
+                        <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</delay>
+                        {% if 'history' in item and not item.history %}
+                            <history>0</history>
+                        {% else %}
+                            <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</history>
+                        {% endif %}
                         {% if 'trends' in item and not item.trends %}
                             <trends>0</trends>
                         {% else %}
-                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD:{{ item.context }}}</trends>
+                            <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                         {% endif %}
                         <value_type>{{ item_value_type(item.value_type) }}</value_type>
                         <applications>
@@ -510,7 +518,6 @@
                             'name': 'sentinel:sentinel_masters',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_masters"]',
-                            'context': 'items:sentinel-sentinel_masters',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -525,7 +532,6 @@
                             'name': 'sentinel:sentinel_running_scripts',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_running_scripts"]',
-                            'context': 'items:sentinel-sentinel_running_scripts',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -540,7 +546,6 @@
                             'name': 'sentinel:sentinel_scripts_queue_length',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","sentinel:sentinel_scripts_queue_length"]',
-                            'context': 'items:sentinel-sentinel_scripts_queue_length',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -555,7 +560,6 @@
                             'name': 'server:uptime_in_seconds',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"]',
-                            'context': 'items:server-uptime_in_seconds',
                             'value_type': 'UNSIGNED',
                             'units': 'uptime',
                             'master_item_key': master,
@@ -572,8 +576,8 @@
                         {
                             'name': 'Redis Sentinel[{#LOCATION}] has been restarted',
                             'expression':
-                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"].max({$REDIS_SENTINEL.LAST_VALUES_TO_CHECK:items:uptime})}'
-                                '<{$REDIS_SENTINEL.UPTIME.MIN}',
+                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"].max(#1)}'
+                                '<{$REDIS_SENTINEL.UPTIME.MIN:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
                         },
                     ],
@@ -626,7 +630,6 @@
                             'name': 'masters:{#SUBJECT}:ckquorum',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"]',
-                            'context': 'masters:masters-ckquorum',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -644,7 +647,6 @@
                             'name': 'masters:{#SUBJECT}:sentinels',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"]',
-                            'context': 'masters:masters-sentinels',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -659,7 +661,6 @@
                             'name': 'masters:{#SUBJECT}:slaves',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:slaves"]',
-                            'context': 'masters:masters-slaves',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -674,7 +675,6 @@
                             'name': 'masters:{#SUBJECT}:status',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:status"]',
-                            'context': 'masters:masters-status',
                             'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [
@@ -689,7 +689,6 @@
                             'name': 'masters:{#SUBJECT}:usable_sentinels',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"]',
-                            'context': 'masters:masters-usable_sentinels',
                             'value_type': 'UNSIGNED',
                             'master_item_key': master,
                             'preprocessing': [
@@ -757,15 +756,17 @@
 
             <macros>
                 {% for macro in [
-                        ('{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD:stats}', '0'),
+                        ('{$REDIS_SENTINEL.LOCATIONS}', ''),
+
+                        ('{$REDIS_SENTINEL.PROCESSES.MIN}', '1'),
+
+                        ('{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
+                        ('{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}', '1h'),
+
                         ('{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}', '30d'),
                         ('{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}', '365d'),
                         ('{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}', '1m'),
-                        ('{$REDIS_SENTINEL.LAST_VALUES_TO_CHECK}', '#1'),
-                        ('{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
-                        ('{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}', '1h'),
-                        ('{$REDIS_SENTINEL.LOCATIONS}', ''),
-                        ('{$REDIS_SENTINEL.PROCESSES.MIN}', '1'),
+
                         ('{$REDIS_SENTINEL.UPTIME.MIN}', '10m'),
                     ] %}
                     <macro>
