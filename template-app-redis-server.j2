@@ -421,7 +421,6 @@
                         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
                         <key>{{ item.key|e }}</key>
                         <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}</delay>
-                        <delay>{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}</delay>
                         {% if 'history' in item and not item.history %}
                             <history>0</history>
                         {% else %}
