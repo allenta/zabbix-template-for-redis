@@ -44,6 +44,17 @@
     {%- endif -%}
 {%- endmacro -%}
 
+{%- macro trigger_recovery(name) -%}
+    {%- if version == '4.4' -%}
+        {{ name }}
+    {%- else -%}
+        {{ {
+            'EXPRESSION': 0,
+            'RECOVERY_EXPRESSION': 1,
+        }[name] }}
+    {%- endif -%}
+{%- endmacro -%}
+
 {%- macro preprocessing_type(name) -%}
     {%- if version == '4.4' -%}
         {{ name }}
@@ -116,9 +127,14 @@
     <expression>{{ definition.expression|e }}</expression>
     <name>{{ definition.name|e }}</name>
     <priority>{{ trigger_priority(definition.priority) }}</priority>
-    {% if version in ('4.0', '4.2') %}
-        <recovery_mode>0</recovery_mode>
+    {% if 'recovery' in definition %}
+        <recovery_mode>{{ trigger_priority('RECOVERY_EXPRESSION') }}</recovery_mode>
+        <recovery_expression>{{ definition.recovery|e }}</recovery_expression>
+    {% else %}
+        <recovery_mode>{{ trigger_priority('EXPRESSION') }}</recovery_mode>
         <recovery_expression/>
+    {% endif %}
+    {% if version in ('4.0', '4.2') %}
         <correlation_mode>0</correlation_mode>
         <correlation_tag/>
         <url/>
@@ -348,7 +364,7 @@
     {
         'name': 'Redis Server is not running',
         'expression':
-            '{Template App ' + name + ':proc.num[redis-server].max(#1)}'
+            '{Template App ' + name + ':proc.num[redis-server].last()}'
             '<{$REDIS_SERVER.PROCESSES.MIN}',
         'priority': 'DISASTER',
     } -%}
@@ -1189,7 +1205,7 @@
                         {
                             'name': 'Redis Server[{#LOCATION}] is evicting keys',
                             'expression':
-                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].min(#1)}'
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].last()}'
                                 '>{$REDIS_SERVER.EVICTED_KEYS.MAX:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
                         },
