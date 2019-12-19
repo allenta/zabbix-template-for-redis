@@ -448,6 +448,7 @@
                             <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                         {% endif %}
                         <value_type>{{ item_value_type(item.value_type) }}</value_type>
+                        <units>{{ item.units|default('')|e }}</units>
                         <applications>
                             <application>
                                 <name>Redis Sentinel</name>
@@ -458,7 +459,6 @@
                             <snmp_oid/>
                             <status>0</status>
                             <allowed_hosts/>
-                            <units/>
                             <snmpv3_contextname/>
                             <snmpv3_securityname/>
                             <snmpv3_securitylevel>0</snmpv3_securitylevel>
