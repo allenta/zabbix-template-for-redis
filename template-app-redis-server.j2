@@ -128,10 +128,10 @@
     <name>{{ definition.name|e }}</name>
     <priority>{{ trigger_priority(definition.priority) }}</priority>
     {% if 'recovery' in definition %}
-        <recovery_mode>{{ trigger_priority('RECOVERY_EXPRESSION') }}</recovery_mode>
+        <recovery_mode>{{ trigger_recovery('RECOVERY_EXPRESSION') }}</recovery_mode>
         <recovery_expression>{{ definition.recovery|e }}</recovery_expression>
     {% else %}
-        <recovery_mode>{{ trigger_priority('EXPRESSION') }}</recovery_mode>
+        <recovery_mode>{{ trigger_recovery('EXPRESSION') }}</recovery_mode>
         <recovery_expression/>
     {% endif %}
     {% if version in ('4.0', '4.2') %}
