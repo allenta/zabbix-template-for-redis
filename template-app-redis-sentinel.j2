@@ -719,6 +719,7 @@
                         {
                             'name': 'Redis Sentinel[{#LOCATION}] {#SUBJECT} cannot reach quorum',
                             'expression':
+                                '{$REDIS_SENTINEL.QUORUM.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
                                 '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"].last()}'
                                 '<>1',
                             'priority': 'HIGH',
@@ -726,6 +727,7 @@
                         {
                             'name': 'Redis Sentinel[{#LOCATION}] {#SUBJECT} is not able to use all sentinels',
                             'expression':
+                                '{$REDIS_SENTINEL.USABLE_SENTINELS.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
                                 '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"].last()}'
                                 '<>{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"].last()}',
                             'priority': 'HIGH',
@@ -783,6 +785,9 @@
                         ('{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}', '1m'),
 
                         ('{$REDIS_SENTINEL.UPTIME.MIN}', '10m'),
+
+                        ('{$REDIS_SENTINEL.QUORUM.ENABLED}', '1'),
+                        ('{$REDIS_SENTINEL.USABLE_SENTINELS.ENABLED}', '1'),
                     ] %}
                     <macro>
                         <macro>{{ macro[0]|e }}</macro>

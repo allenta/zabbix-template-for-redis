@@ -1198,13 +1198,15 @@
                         {
                             'name': 'Redis Server[{#LOCATION}] is a master without slaves',
                             'expression':
-                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:role"].str(master)}=1'
-                                ' and {Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:connected_slaves"].last()}=0',
+                                '{$REDIS_SERVER.CONNECTED_SLAVES.ENABLED:"{#LOCATION_ID}"} and '
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:role"].str(master)}=1 and '
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:connected_slaves"].last()}=0',
                             'priority': 'HIGH',
                         },
                         {
                             'name': 'Redis Server[{#LOCATION}] is evicting keys',
                             'expression':
+                                '{$REDIS_SERVER.EVICTED_KEYS.ENABLED:"{#LOCATION_ID}"} and '
                                 '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].last()}'
                                 '>{$REDIS_SERVER.EVICTED_KEYS.MAX:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
@@ -1623,7 +1625,8 @@
                         ('{$REDIS_SERVER.ITEM_TREND_STORAGE_PERIOD}', '365d'),
                         ('{$REDIS_SERVER.ITEM_UPDATE_INTERVAL}', '1m'),
 
-
+                        ('{$REDIS_SERVER.CONNECTED_SLAVES.ENABLED}', '1'),
+                        ('{$REDIS_SERVER.EVICTED_KEYS.ENABLED}', '1'),
                         ('{$REDIS_SERVER.EVICTED_KEYS.MAX}', '0.0'),
                         ('{$REDIS_SERVER.UPTIME.MIN}', '10m'),
                     ] %}
