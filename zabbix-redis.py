@@ -99,7 +99,11 @@ def stats(options):
     # Build master item contents.
     for instance in options.redis_instances.split(','):
         instance = instance.strip()
-        stats = _stats(instance, options.redis_type, options.redis_password)
+        stats = _stats(
+            instance,
+            options.redis_type,
+            options.redis_user,
+            options.redis_password)
         for item in stats.items:
             result['%(instance)s.%(name)s' % {
                 'instance': _safe_zabbix_string(instance),
@@ -129,7 +133,11 @@ def discover(options):
                 '{#LOCATION_ID}': _safe_zabbix_string(instance),
             })
         else:
-            stats = _stats(instance, options.redis_type, options.redis_password)
+            stats = _stats(
+                instance,
+                options.redis_type,
+                options.redis_user,
+                options.redis_password)
             for subject in stats.subjects(options.subject):
                 discovery['data'].append({
                     '{#LOCATION}': instance,
@@ -291,7 +299,7 @@ class Stats(object):
         )
 
 
-def _stats(location, type, password):
+def _stats(location, type, user, password):
     # Initializations.
     stats = Stats(ITEMS[type], SUBJECTS[type])
     clustered = False
@@ -305,6 +313,10 @@ def _stats(location, type, password):
             opts = '-h "%s" -p "%s"' % tuple(location.split(':', 1))
         else:
             opts = '-p "%s"' % location
+
+    # Authenticate as an user other than default?
+    if user is not None:
+        opts += ' --user "%s"' % user
 
     # Use password?
     if password is not None:
@@ -464,6 +476,10 @@ def main():
         '-t', '--redis-type', dest='redis_type',
         type=str, required=True, choices=SUBJECTS.keys(),
         help='the type of the Redis instance to get stats from')
+    parser.add_argument(
+        '--redis-user', dest='redis_user',
+        type=str, default=None,
+        help='user name to be used in Redis instances authentication (redis >= 6.0)')
     parser.add_argument(
         '--redis-password', dest='redis_password',
         type=str, default=None,
