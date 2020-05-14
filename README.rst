@@ -13,11 +13,11 @@
 
     $ pip install jinja2-cli
     $ jinja2 \
-        -D version={4.0,4.2,4.4} \
+        -D version={4.0,4.2,4.4,5.0} \
         [-D name='Redis Server'] \
         --strict -o template.xml template-app-redis-server.j2
     $ jinja2 \
-        -D version={4.0,4.2,4.4} \
+        -D version={4.0,4.2,4.4,5.0} \
         [-D name='Redis Sentinel'] \
         --strict -o template.xml template-app-redis-sentinel.j2
 
