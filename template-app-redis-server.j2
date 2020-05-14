@@ -7,119 +7,119 @@
 {#-#########################################################################-#}
 
 {%- macro item_type(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'TRAP': 2,
             'ZABBIX_ACTIVE': 7,
             'CALCULATED': 15,
             'DEPENDENT': 18,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro item_value_type(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'FLOAT': 0,
             'UNSIGNED': 3,
             'TEXT': 4,
             'DEPENDENT': 18,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro trigger_priority(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'WARNING': 2,
             'HIGH': 4,
             'DISASTER': 5,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro trigger_recovery(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'EXPRESSION': 0,
             'RECOVERY_EXPRESSION': 1,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro preprocessing_type(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'BOOL_TO_DECIMAL': 6,
             'CHANGE_PER_SECOND': 10,
             'JSONPATH': 12,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro preprocessing_error_handler(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'ORIGINAL_ERROR': 0,
             'DISCARD_VALUE': 1,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro graph_type(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'NORMAL': 0,
             'STACKED': 1,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro graph_item_drawtype(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'SINGLE_LINE': 0,
             'FILLED_REGION': 1,
             'BOLD_LINE': 2,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro graph_item_yaxisside(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'LEFT': 0,
             'RIGHT': 1,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
 {%- macro graph_item_calc_fnc(name) -%}
-    {%- if version == '4.4' -%}
-        {{ name }}
-    {%- else -%}
+    {%- if version in ('4.0', '4.2') -%}
         {{ {
             'MIN': 1,
             'AVG': 2,
         }[name] }}
+    {%- else -%}
+        {{ name }}
     {%- endif -%}
 {%- endmacro -%}
 
@@ -247,7 +247,7 @@
                                 <step>
                                     <type>{{ preprocessing_type(step.type) }}</type>
                                     <params>{{ step.params|default('')|e }}</params>
-                                    {% if version in ('4.2', '4.4') %}
+                                    {% if version != '4.0' %}
                                         <error_handler>{{ preprocessing_error_handler(step.error_handler|default('ORIGINAL_ERROR')) }}</error_handler>
                                         <error_handler_params/>
                                     {% endif %}
@@ -399,16 +399,10 @@
                     <name>Redis Server</name>
                 </application>
             </applications>
-            <templates/>
-            <screens/>
-            <httptests/>
-            {% if version in ('4.2', '4.4') %}
-                <tags>
-                    <tag>
-                        <tag>App</tag>
-                        <value>Redis Server</value>
-                    </tag>
-                </tags>
+            {% if version in ('4.0', '4.2') %}
+                <templates/>
+                <screens/>
+                <httptests/>
             {% endif %}
 
             {#-#############################################################-#}
@@ -1607,6 +1601,19 @@
                         },
                     ]) }}
             </discovery_rules>
+
+            {#-#############################################################-#}
+            {#- TAGS -#}
+            {#-#############################################################-#}
+
+            {% if version != '4.0' %}
+                <tags>
+                    <tag>
+                        <tag>App</tag>
+                        <value>Redis Server</value>
+                    </tag>
+                </tags>
+            {% endif %}
 
             {#-#############################################################-#}
             {#- MACROS -#}
