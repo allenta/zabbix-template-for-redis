@@ -1,0 +1,104 @@
+name: Create release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create_release:
+    name: Create release
+
+    runs-on: ubuntu-18.04
+
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+    steps:
+      - name: Create draft
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          draft: true
+          prerelease: false
+
+  upload_assets:
+    name: Upload assets
+
+    runs-on: ubuntu-18.04
+
+    needs: create_release
+
+    strategy:
+      matrix:
+        version:
+          - '4.0'
+          - '4.2'
+          - '4.4'
+          - '5.0'
+        flavour:
+          - name: Redis Server
+            slug: redis-server
+          - name: Redis Sentinel
+            slug: redis-sentinel
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jinja2-cli
+
+      - name: Extract tag name
+        run: echo ::set-env name=TAG_NAME::${GITHUB_REF/refs\/tags\//}
+
+      - name: Generate template
+        run: |
+          jinja2 \
+            -D version=${{ matrix.version }} \
+            -D name='${{ matrix.flavour.name }}' \
+            -D description="Template App ${{ matrix.flavour.name }} $TAG_NAME" \
+            --strict -o template.xml template-app-${{ matrix.flavour.slug }}.j2
+
+      - name: Upload template
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.release_upload_url }}
+          asset_path: ./template.xml
+          asset_name: template-app-${{ matrix.flavour.slug }}-${{ matrix.version }}-${{ env.TAG_NAME }}.xml
+          asset_content_type: application/xml
+
+  publish_release:
+    name: Publish release
+
+    runs-on: ubuntu-18.04
+
+    needs:
+      - create_release
+      - upload_assets
+
+    steps:
+      - name: Publish release
+        uses: actions/github-script@0.9.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: '${{ needs.create_release.outputs.release_id }}',
+              draft: false
+            })

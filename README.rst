@@ -9,16 +9,18 @@
     UserParameter=redis_sentinel.discovery[*],/usr/local/bin/zabbix-redis.py -i '$1' -t sentinel discover $2 2> /dev/null
     UserParameter=redis_sentinel.stats[*],/usr/local/bin/zabbix-redis.py -i '$1' -t sentinel stats 2> /dev/null
 
-3. Generate the required templates using the Jinja2 skeleton and import them::
+3. Import the templates. You may download the appropriate versions from `the releases page <https://github.com/allenta/zabbix-template-for-redis/releases/latest/>`_ or generate them using the Jinja2 skeletons::
 
     $ pip install jinja2-cli
     $ jinja2 \
         -D version={4.0,4.2,4.4,5.0} \
         [-D name='Redis Server'] \
+        [-D description=''] \
         --strict -o template.xml template-app-redis-server.j2
     $ jinja2 \
         -D version={4.0,4.2,4.4,5.0} \
         [-D name='Redis Sentinel'] \
+        [-D description=''] \
         --strict -o template.xml template-app-redis-sentinel.j2
 
 4. Link hosts to the templates. Beware depending on the used template you must set a value for the ``{$REDIS_SERVER.LOCATIONS}`` or ``{$REDIS_SENTINEL.LOCATIONS}`` macro (comma-delimited list of Redis instances; ``port``, ``host:port`` and ``unix:///path/to/socket`` formats are allowed). Additional macros and contexts are available for further customizations.
