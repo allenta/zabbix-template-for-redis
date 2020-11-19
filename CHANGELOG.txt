@@ -1,2 +1,5 @@
+- 2.0 (2020-11-19):
+    - Added support for Zabbix 5.2.
+
 - 1.0 (2020-05-14):
     - Initial release.
