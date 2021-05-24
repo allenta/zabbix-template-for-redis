@@ -2,6 +2,8 @@
 
 {%- set description = description|default('') -%}
 
+{%- set seed = ['Allenta', 'Redis Server']|join('/') -%}
+
 {%- set master = 'redis_server.stats["{$REDIS_SERVER.LOCATIONS}"]' -%}
 
 {#-#########################################################################-#}
@@ -126,6 +128,9 @@
 {%- endmacro -%}
 
 {%- macro trigger(definition) -%}
+    {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+        <uuid>{{ [seed, definition.id]|join('/')|zuuid }}</uuid>
+    {% endif %}
     <expression>{{ definition.expression|e }}</expression>
     <name>{{ definition.name|e }}</name>
     <priority>{{ trigger_priority(definition.priority) }}</priority>
@@ -151,6 +156,9 @@
 
 {%- macro discovery_rule(rule, items, triggers, graphs) -%}
     <discovery_rule>
+        {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+            <uuid>{{ [seed, rule.id]|join('/')|zuuid }}</uuid>
+        {% endif %}
         <name>{{ rule.name|e }}</name>
         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
         <key>{{ rule.key|e }}</key>
@@ -210,6 +218,9 @@
         <item_prototypes>
             {% for item in items %}
                 <item_prototype>
+                    {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                        <uuid>{{ [seed, item.id]|join('/')|zuuid }}</uuid>
+                    {% endif %}
                     <name>Redis Server[{{ '{#' }}LOCATION}] - {{ item.name|e }}</name>
                     <type>{{ item_type(item.type) }}</type>
                     <key>{{ item.key|e }}</key>
@@ -231,11 +242,20 @@
                     <value_type>{{ item_value_type(item.value_type) }}</value_type>
                     <units>{{ item.units|default('')|e }}</units>
                     <params>{{ item.params|default('')|e }}</params>
-                    <applications>
-                        <application>
-                            <name>Redis Server</name>
-                        </application>
-                    </applications>
+                    {% if version in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                        <applications>
+                            <application>
+                                <name>Redis Server</name>
+                            </application>
+                        </applications>
+                    {% else %}
+                        <tags>
+                            <tag>
+                                <tag>Application</tag>
+                                <value>Redis Server</value>
+                            </tag>
+                        </tags>
+                    {% endif %}
                     {% if 'master_item_key' in item %}
                         <master_item>
                             <key>{{ item.master_item_key|e }}</key>
@@ -322,6 +342,9 @@
         <graph_prototypes>
             {% for graph in graphs %}
                 <graph_prototype>
+                    {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                        <uuid>{{ [seed, graph.id]|join('/')|zuuid }}</uuid>
+                    {% endif %}
                     <name>Redis Server[{{ '{#' }}LOCATION}] &gt; {{ graph.name|e }}</name>
                     <type>{{ graph_type(graph.type|default('NORMAL')) }}</type>
                     <graph_items>
@@ -370,9 +393,13 @@
 
 {%- set redis_server_processes_trigger =
     {
+        'id': 'trigger-1',
         'name': 'Redis Server is not running',
         'expression':
             '{Template App ' + name + ':proc.num[redis-server].last()}'
+            '<{$REDIS_SERVER.PROCESSES.MIN}'
+            if version in ('4.0', '4.2', '4.4', '5.0', '5.2') else
+            '/Template App ' + name + '/proc.num[redis-server])'
             '<{$REDIS_SERVER.PROCESSES.MIN}',
         'priority': 'DISASTER',
     } -%}
@@ -387,11 +414,17 @@
     <date>2018-10-29T09:52:03Z</date>
     <groups>
         <group>
+            {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
+            {% endif %}
             <name>Templates</name>
         </group>
     </groups>
     <templates>
         <template>
+            {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                <uuid>{{ [seed]|join('/')|zuuid }}</uuid>
+            {% endif %}
             <template>Template App {{ name|e }}</template>
             <name>Template App {{ name|e }}</name>
             {% if description %}
@@ -404,11 +437,13 @@
                     <name>Templates</name>
                 </group>
             </groups>
-            <applications>
-                <application>
-                    <name>Redis Server</name>
-                </application>
-            </applications>
+            {% if version in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                <applications>
+                    <application>
+                        <name>Redis Server</name>
+                    </application>
+                </applications>
+            {% endif %}
             {% if version in ('4.0', '4.2') %}
                 <templates/>
                 <screens/>
@@ -422,6 +457,7 @@
             <items>
                 {% for item in [
                         {
+                            'id': 'item-1',
                             'name': 'stats',
                             'key': master,
                             'history': false,
@@ -430,6 +466,7 @@
                             'triggers': [],
                         },
                         {
+                            'id': 'item-2',
                             'name': '$1 processes',
                             'key': 'proc.num[redis-server]',
                             'value_type': 'UNSIGNED',
@@ -437,6 +474,9 @@
                         },
                     ] %}
                     <item>
+                        {% if version not in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                            <uuid>{{ [seed, item.id]|join('/')|zuuid }}</uuid>
+                        {% endif %}
                         <name>Redis Server - {{ item.name|e }}</name>
                         <type>{{ item_type('ZABBIX_ACTIVE') }}</type>
                         <key>{{ item.key|e }}</key>
@@ -453,11 +493,20 @@
                         {% endif %}
                         <value_type>{{ item_value_type(item.value_type) }}</value_type>
                         <units>{{ item.units|default('')|e }}</units>
-                        <applications>
-                            <application>
-                                <name>Redis Server</name>
-                            </application>
-                        </applications>
+                        {% if version in ('4.0', '4.2', '4.4', '5.0', '5.2') %}
+                            <applications>
+                                <application>
+                                    <name>Redis Server</name>
+                                </application>
+                            </applications>
+                        {% else %}
+                            <tags>
+                                <tag>
+                                    <tag>Application</tag>
+                                    <value>Redis Server</value>
+                                </tag>
+                            </tags>
+                        {% endif %}
                         {% if version in ('4.0', '4.2') %}
                             <snmp_community/>
                             <snmp_oid/>
@@ -528,12 +577,14 @@
 
                 {{ discovery_rule(
                     {
+                        'id': 'discovery-rule-1',
                         'name': 'Items discovery',
                         'key': 'redis_server.discovery["{$REDIS_SERVER.LOCATIONS}","items"]',
                         'context': 'items',
                     },
                     [
                         {
+                            'id': 'item-prototype-1.1',
                             'name': 'clients:blocked_clients',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","clients:blocked_clients"]',
@@ -548,6 +599,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.2',
                             'name': 'clients:connected_clients',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","clients:connected_clients"]',
@@ -562,6 +614,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.3',
                             'name': 'cluster:cluster_known_nodes',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_known_nodes"]',
@@ -576,6 +629,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.4',
                             'name': 'cluster:cluster_size',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_size"]',
@@ -590,6 +644,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.5',
                             'name': 'cluster:cluster_slots_assigned',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_assigned"]',
@@ -604,6 +659,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.6',
                             'name': 'cluster:cluster_slots_fail',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_fail"]',
@@ -618,6 +674,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.7',
                             'name': 'cluster:cluster_slots_ok',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_ok"]',
@@ -632,6 +689,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.8',
                             'name': 'cluster:cluster_slots_pfail',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_slots_pfail"]',
@@ -646,6 +704,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.9',
                             'name': 'cluster:cluster_state',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cluster:cluster_state"]',
@@ -661,6 +720,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.10',
                             'name': 'cpu:used_cpu_sys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_sys"]',
@@ -679,6 +739,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.11',
                             'name': 'cpu:used_cpu_sys_children',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_sys_children"]',
@@ -697,6 +758,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.12',
                             'name': 'cpu:used_cpu_user',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_user"]',
@@ -715,6 +777,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.13',
                             'name': 'cpu:used_cpu_user_children',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","cpu:used_cpu_user_children"]',
@@ -733,15 +796,20 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.14',
                             'name': 'hit_ratio',
                             'type': 'CALCULATED',
                             'key': 'redis_server.info["{#LOCATION_ID}","hit_ratio"]',
                             'value_type': 'FLOAT',
                             'units': '%',
                             'delay': true,
-                            'params': '100*last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]")/(last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]")+last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_misses\\"]")+(count("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]",#1,0)*count("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_misses\\"]",#1,0)))',
+                            'params':
+                                '100*last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]")/(last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]")+last("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_misses\\"]")+(count("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_hits\\"]",#1,0)*count("redis_server.info[\\"{#LOCATION_ID}\\",\\"stats:keyspace_misses\\"]",#1,0)))'
+                                if version in ('4.0', '4.2', '4.4', '5.0', '5.2') else
+                                '100*last(//redis_server.info["{#LOCATION_ID}","stats:keyspace_hits"])/(last(//redis_server.info["{#LOCATION_ID}","stats:keyspace_hits"])+last(//redis_server.info["{#LOCATION_ID}","stats:keyspace_misses"])+(count(//redis_server.info["{#LOCATION_ID}","stats:keyspace_hits"],#1,"eq",0)*count(//redis_server.info["{#LOCATION_ID}","stats:keyspace_misses"],#1,"eq",0)))',
                         },
                         {
+                            'id': 'item-prototype-1.15',
                             'name': 'memory:mem_fragmentation_ratio',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:mem_fragmentation_ratio"]',
@@ -756,6 +824,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.16',
                             'name': 'memory:used_memory',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory"]',
@@ -771,6 +840,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.17',
                             'name': 'memory:used_memory_lua',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory_lua"]',
@@ -786,6 +856,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.18',
                             'name': 'memory:used_memory_rss',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","memory:used_memory_rss"]',
@@ -801,6 +872,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.19',
                             'name': 'persistence:aof_last_bgrewrite_status',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_bgrewrite_status"]',
@@ -816,6 +888,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.20',
                             'name': 'persistence:aof_last_rewrite_time_sec',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_rewrite_time_sec"]',
@@ -830,6 +903,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.21',
                             'name': 'persistence:aof_last_write_status',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:aof_last_write_status"]',
@@ -845,6 +919,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.22',
                             'name': 'persistence:rdb_changes_since_last_save',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_changes_since_last_save"]',
@@ -859,6 +934,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.23',
                             'name': 'persistence:rdb_last_bgsave_status',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_bgsave_status"]',
@@ -874,6 +950,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.24',
                             'name': 'persistence:rdb_last_bgsave_time_sec',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_bgsave_time_sec"]',
@@ -888,6 +965,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.25',
                             'name': 'persistence:rdb_last_save_time',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","persistence:rdb_last_save_time"]',
@@ -903,6 +981,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.26',
                             'name': 'replication:connected_slaves',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","replication:connected_slaves"]',
@@ -917,6 +996,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.27',
                             'name': 'replication:role',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","replication:role"]',
@@ -932,6 +1012,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.28',
                             'name': 'server:uptime_in_seconds',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"]',
@@ -947,6 +1028,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.29',
                             'name': 'stats:evicted_keys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:evicted_keys"]',
@@ -965,6 +1047,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.30',
                             'name': 'stats:expired_keys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:expired_keys"]',
@@ -983,6 +1066,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.31',
                             'name': 'stats:keyspace_hits',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:keyspace_hits"]',
@@ -1001,6 +1085,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.32',
                             'name': 'stats:keyspace_misses',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:keyspace_misses"]',
@@ -1019,6 +1104,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.33',
                             'name': 'stats:pubsub_channels',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:pubsub_channels"]',
@@ -1033,6 +1119,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.34',
                             'name': 'stats:pubsub_patterns',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:pubsub_patterns"]',
@@ -1047,6 +1134,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.35',
                             'name': 'stats:rejected_connections',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:rejected_connections"]',
@@ -1065,6 +1153,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.36',
                             'name': 'stats:sync_full',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_full"]',
@@ -1083,6 +1172,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.37',
                             'name': 'stats:sync_partial_err',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_partial_err"]',
@@ -1101,6 +1191,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.38',
                             'name': 'stats:sync_partial_ok',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:sync_partial_ok"]',
@@ -1119,6 +1210,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.39',
                             'name': 'stats:total_commands_processed',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_commands_processed"]',
@@ -1137,6 +1229,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.40',
                             'name': 'stats:total_connections_received',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_connections_received"]',
@@ -1155,6 +1248,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.41',
                             'name': 'stats:total_net_input_bytes',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_net_input_bytes"]',
@@ -1173,6 +1267,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-1.42',
                             'name': 'stats:total_net_output_bytes',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","stats:total_net_output_bytes"]',
@@ -1193,31 +1288,46 @@
                     ],
                     [
                         {
+                            'id': 'trigger-prototype-1.1',
                             'name': 'Redis Server[{#LOCATION}] has been restarted',
                             'expression':
-                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"].max(#1)}'
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"].last()}'
+                                '<{$REDIS_SERVER.UPTIME.MIN:"{#LOCATION_ID}"}'
+                                if version in ('4.0', '4.2', '4.4', '5.0', '5.2') else
+                                'last(/Template App ' + name + '/redis_server.info["{#LOCATION_ID}","server:uptime_in_seconds"])'
                                 '<{$REDIS_SERVER.UPTIME.MIN:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
                         },
                         {
+                            'id': 'trigger-prototype-1.2',
                             'name': 'Redis Server[{#LOCATION}] is a master without slaves',
                             'expression':
                                 '{$REDIS_SERVER.CONNECTED_SLAVES.ENABLED:"{#LOCATION_ID}"} and '
                                 '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:role"].str(master)}=1 and '
-                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:connected_slaves"].last()}=0',
+                                '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","replication:connected_slaves"].last()}=0'
+                                if version in ('4.0', '4.2', '4.4', '5.0', '5.2') else
+                                '{$REDIS_SERVER.CONNECTED_SLAVES.ENABLED:"{#LOCATION_ID}"} and '
+                                'find(/Template App ' + name + '/redis_server.info["{#LOCATION_ID}","replication:role"],,"eq","master")=1 and '
+                                'last(/Template App ' + name + '/redis_server.info["{#LOCATION_ID}","replication:connected_slaves"])=0',
                             'priority': 'HIGH',
                         },
                         {
+                            'id': 'trigger-prototype-1.3',
                             'name': 'Redis Server[{#LOCATION}] is evicting keys',
                             'expression':
                                 '{$REDIS_SERVER.EVICTED_KEYS.ENABLED:"{#LOCATION_ID}"} and '
                                 '{Template App ' + name + ':redis_server.info["{#LOCATION_ID}","stats:evicted_keys"].last()}'
+                                '>{$REDIS_SERVER.EVICTED_KEYS.MAX:"{#LOCATION_ID}"}'
+                                if version in ('4.0', '4.2', '4.4', '5.0', '5.2') else
+                                '{$REDIS_SERVER.EVICTED_KEYS.ENABLED:"{#LOCATION_ID}"} and '
+                                'last(/Template App ' + name + '/redis_server.info["{#LOCATION_ID}","stats:evicted_keys"])'
                                 '>{$REDIS_SERVER.EVICTED_KEYS.MAX:"{#LOCATION_ID}"}',
                             'priority': 'HIGH',
                         },
                     ],
                     [
                         {
+                            'id': 'graph-prototype-1.1',
                             'name': 'Clients',
                             'items': [
                                 {
@@ -1231,6 +1341,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.2',
                             'name': 'Cluster: nodes',
                             'items': [
                                 {
@@ -1244,6 +1355,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.3',
                             'name': 'Cluster: slots',
                             'items': [
                                 {
@@ -1265,6 +1377,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.4',
                             'name': 'Commands',
                             'items': [
                                 {
@@ -1274,6 +1387,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.5',
                             'name': 'Connections',
                             'items': [
                                 {
@@ -1287,6 +1401,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.6',
                             'name': 'CPU: children usage',
                             'type': 'STACKED',
                             'items': [
@@ -1301,6 +1416,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.7',
                             'name': 'CPU: parent usage',
                             'type': 'STACKED',
                             'items': [
@@ -1315,6 +1431,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.8',
                             'name': 'Keyspace: expired & evicted keys',
                             'items': [
                                 {
@@ -1328,6 +1445,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.9',
                             'name': 'Keyspace: hits vs. misses',
                             'items': [
                                 {
@@ -1346,6 +1464,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.10',
                             'name': 'Memory: fragmentation ratio',
                             'items': [
                                 {
@@ -1355,6 +1474,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.11',
                             'name': 'Memory: LUA usage',
                             'items': [
                                 {
@@ -1364,6 +1484,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.12',
                             'name': 'Memory: total usage',
                             'items': [
                                 {
@@ -1377,6 +1498,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.13',
                             'name': 'Networking',
                             'type': 'STACKED',
                             'items': [
@@ -1391,6 +1513,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.14',
                             'name': 'Persistence: changes since last RDB save',
                             'items': [
                                 {
@@ -1400,6 +1523,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.15',
                             'name': 'Persistence: last AOF rewrite time',
                             'items': [
                                 {
@@ -1409,6 +1533,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.16',
                             'name': 'Persistence: last RDB save time',
                             'items': [
                                 {
@@ -1418,6 +1543,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.17',
                             'name': 'Pub/Sub',
                             'items': [
                                 {
@@ -1431,6 +1557,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.18',
                             'name': 'Replication',
                             'items': [
                                 {
@@ -1440,6 +1567,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.19',
                             'name': 'Syncs',
                             'items': [
                                 {
@@ -1457,6 +1585,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-1.20',
                             'name': 'Uptime',
                             'items': [
                                 {
@@ -1473,12 +1602,14 @@
 
                 {{ discovery_rule(
                     {
+                        'id': 'discovery-rule-2',
                         'name': 'Keyspace discovery',
                         'key': 'redis_server.discovery["{$REDIS_SERVER.LOCATIONS}","keyspace"]',
                         'context': 'keyspace',
                     },
                     [
                         {
+                            'id': 'item-prototype-2.1',
                             'name': 'keyspace:{#SUBJECT}:avg_ttl',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:avg_ttl"]',
@@ -1493,6 +1624,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-2.2',
                             'name': 'keyspace:{#SUBJECT}:expires',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:expires"]',
@@ -1507,6 +1639,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-2.3',
                             'name': 'keyspace:{#SUBJECT}:keys',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","keyspace:{#SUBJECT_ID}:keys"]',
@@ -1525,6 +1658,7 @@
                     ],
                     [
                         {
+                            'id': 'graph-prototype-2.1',
                             'name': 'Keyspace[{#SUBJECT}]: average TTL',
                             'items': [
                                 {
@@ -1534,6 +1668,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-2.2',
                             'name': 'Keyspace[{#SUBJECT}]: keys',
                             'items': [
                                 {
@@ -1550,12 +1685,14 @@
 
                 {{ discovery_rule(
                     {
+                        'id': 'discovery-rule-3',
                         'name': 'Commandstats discovery',
                         'key': 'redis_server.discovery["{$REDIS_SERVER.LOCATIONS}","commandstats"]',
                         'context': 'commandstats',
                     },
                     [
                         {
+                            'id': 'item-prototype-3.1',
                             'name': 'commandstats:{#SUBJECT}:calls',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","commandstats:{#SUBJECT}:calls"]',
@@ -1574,6 +1711,7 @@
                             ],
                         },
                         {
+                            'id': 'item-prototype-3.2',
                             'name': 'commandstats:{#SUBJECT}:usec_per_call',
                             'type': 'DEPENDENT',
                             'key': 'redis_server.info["{#LOCATION_ID}","commandstats:{#SUBJECT}:usec_per_call"]',
@@ -1592,6 +1730,7 @@
                     ],
                     [
                         {
+                            'id': 'graph-prototype-3.1',
                             'name': 'Command stats[{#SUBJECT}]: calls',
                             'items': [
                                 {
@@ -1601,6 +1740,7 @@
                             ],
                         },
                         {
+                            'id': 'graph-prototype-3.2',
                             'name': 'Command stats[{#SUBJECT}]: usec / call',
                             'items': [
                                 {
@@ -1619,7 +1759,7 @@
             {% if version != '4.0' %}
                 <tags>
                     <tag>
-                        <tag>App</tag>
+                        <tag>Application</tag>
                         <value>Redis Server</value>
                     </tag>
                 </tags>

@@ -42,6 +42,7 @@ jobs:
           - '4.4'
           - '5.0'
           - '5.2'
+          - '5.4'
         flavour:
           - name: Redis Server
             slug: redis-server
@@ -66,11 +67,11 @@ jobs:
 
       - name: Generate template
         run: |
-          jinja2 \
+          PYTHONPATH=. jinja2 \
             -D version=${{ matrix.version }} \
             -D name='${{ matrix.flavour.name }}' \
             -D description="Template App ${{ matrix.flavour.name }} $TAG_NAME" \
-            --strict -o template.xml template-app-${{ matrix.flavour.slug }}.j2
+            --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-${{ matrix.flavour.slug }}.j2
 
       - name: Upload template
         uses: actions/upload-release-asset@v1

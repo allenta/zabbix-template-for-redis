@@ -12,15 +12,15 @@
 3. Import the templates. You may download the appropriate versions from `the releases page <https://github.com/allenta/zabbix-template-for-redis/releases/latest/>`_ or generate them using the Jinja2 skeletons::
 
     $ pip install jinja2-cli
-    $ jinja2 \
-        -D version={4.0,4.2,4.4,5.0,5.2} \
+    $ PYTHONPATH=. jinja2 \
+        -D version={4.0,4.2,4.4,5.0,5.2,5.4} \
         [-D name='Redis Server'] \
         [-D description=''] \
-        --strict -o template.xml template-app-redis-server.j2
-    $ jinja2 \
-        -D version={4.0,4.2,4.4,5.0,5.2} \
+        --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-redis-server.j2
+    $ PYTHONPATH=. jinja2 \
+        -D version={4.0,4.2,4.4,5.0,5.2,5.4} \
         [-D name='Redis Sentinel'] \
         [-D description=''] \
-        --strict -o template.xml template-app-redis-sentinel.j2
+        --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-redis-sentinel.j2
 
 4. Link hosts to the templates. Beware depending on the used template you must set a value for the ``{$REDIS_SERVER.LOCATIONS}`` or ``{$REDIS_SENTINEL.LOCATIONS}`` macro (comma-delimited list of Redis instances; ``port``, ``host:port`` and ``unix:///path/to/socket`` formats are allowed). Additional macros and contexts are available for further customizations.

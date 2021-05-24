@@ -1,3 +1,7 @@
+- ? (?):
+    - Added support for Zabbix 5.4. BEWARE custom UUIDs are used (i.e. history will be lost when manually upgrading the template).
+    - 'App' tag renamed to 'Application'.
+
 - 2.0 (2020-11-19):
     - Added support for Zabbix 5.2.
 
