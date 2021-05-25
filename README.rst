@@ -13,12 +13,12 @@
 
     $ pip install jinja2-cli
     $ PYTHONPATH=. jinja2 \
-        -D version={4.0,4.2,4.4,5.0,5.2,5.4} \
+        -D version={5.0,5.2,5.4} \
         [-D name='Redis Server'] \
         [-D description=''] \
         --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-redis-server.j2
     $ PYTHONPATH=. jinja2 \
-        -D version={4.0,4.2,4.4,5.0,5.2,5.4} \
+        -D version={5.0,5.2,5.4} \
         [-D name='Redis Sentinel'] \
         [-D description=''] \
         --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-redis-sentinel.j2

@@ -1,3 +1,7 @@
+- ? (?):
+    - Dropped support for Zabbix 4.x. BEWARE UUIDs of triggers (not trigger prototypes) will change.
+    - Restored unused triggers.
+
 - 3.0 (2021-05-24):
     - Added support for Zabbix 5.4. BEWARE custom UUIDs are used (i.e. history will be lost when manually upgrading the template).
     - 'App' tag renamed to 'Application'.
