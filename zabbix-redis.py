@@ -512,7 +512,11 @@ def main():
             sys.exit(1)
 
     # Execute command.
-    globals()[options.command](options)
+    if options.command:
+        globals()[options.command](options)
+    else:
+        parser.print_help()
+        sys.exit(1)
     sys.exit(0)
 
 if __name__ == '__main__':

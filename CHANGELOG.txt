@@ -1,3 +1,6 @@
+- ? (?):
+    - Removed graphs.
+
 - 4.0 (2021-05-25):
     - Dropped support for Zabbix 4.x. BEWARE UUIDs of triggers (not trigger prototypes) will change.
     - Restored unused triggers.
