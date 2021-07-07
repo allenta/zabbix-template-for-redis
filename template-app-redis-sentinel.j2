@@ -36,6 +36,18 @@
         <key>{{ rule.key|e }}</key>
         <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:&quot;{{ rule.context }}&quot;}</delay>
         <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:&quot;{{ rule.context }}&quot;}</lifetime>
+        {% if rule.context != 'items' %}
+            <filter>
+                <conditions>
+                    <condition>
+                        <formulaid>A</formulaid>
+                        <macro>{{ '{#' }}SUBJECT}</macro>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <value>{$REDIS_SENTINEL.LLD_EXCLUDED_SUBJECTS:&quot;{{ rule.context }}&quot;}</value>
+                    </condition>
+                </conditions>
+            </filter>
+        {% endif %}
         <item_prototypes>
             {% for item in items %}
                 <item_prototype>
@@ -229,6 +241,35 @@
                                     </trigger>
                                 {% endfor %}
                             </triggers>
+                        {% endif %}
+                        {% if item.name == 'stats' %}
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    {% if version == '5.0' %}
+                                        <params>
+                                    {% else %}
+                                        <parameters><parameter>
+                                    {% endif %}
+                                        var exclusions = /{$REDIS_SENTINEL.EXCLUDED_STATS}/;
+
+                                        var stats = JSON.parse(value);
+
+                                        Object.keys(stats).forEach(function(key) {
+                                            var name = key.replace(/^[^.]*[.]/, '');
+                                            if (exclusions.test(name)) {
+                                                delete stats[key];
+                                            }
+                                        });
+
+                                        return JSON.stringify(stats);
+                                    {% if version == '5.0' %}
+                                        </params>
+                                    {% else %}
+                                        </parameter></parameters>
+                                    {% endif %}
+                                </step>
+                            </preprocessing>
                         {% endif %}
                     </item>
                 {% endfor %}
@@ -466,9 +507,11 @@
             <macros>
                 {% for macro in [
                         ('{$REDIS_SENTINEL.LOCATIONS}', ''),
+                        ('{$REDIS_SENTINEL.EXCLUDED_STATS}', '^(?!)'),
 
                         ('{$REDIS_SENTINEL.PROCESSES.MIN}', '1'),
 
+                        ('{$REDIS_SENTINEL.LLD_EXCLUDED_SUBJECTS}', '^(?!)'),
                         ('{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
                         ('{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL}', '1h'),
 

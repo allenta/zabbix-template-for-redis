@@ -36,6 +36,18 @@
         <key>{{ rule.key|e }}</key>
         <delay>{$REDIS_SERVER.LLD_UPDATE_INTERVAL:&quot;{{ rule.context }}&quot;}</delay>
         <lifetime>{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD:&quot;{{ rule.context }}&quot;}</lifetime>
+        {% if rule.context != 'items' %}
+            <filter>
+                <conditions>
+                    <condition>
+                        <formulaid>A</formulaid>
+                        <macro>{{ '{#' }}SUBJECT}</macro>
+                        <operator>NOT_MATCHES_REGEX</operator>
+                        <value>{$REDIS_SERVER.LLD_EXCLUDED_SUBJECTS:&quot;{{ rule.context }}&quot;}</value>
+                    </condition>
+                </conditions>
+            </filter>
+        {% endif %}
         <item_prototypes>
             {% for item in items %}
                 <item_prototype>
@@ -229,6 +241,35 @@
                                     </trigger>
                                 {% endfor %}
                             </triggers>
+                        {% endif %}
+                        {% if item.name == 'stats' %}
+                            <preprocessing>
+                                <step>
+                                    <type>JAVASCRIPT</type>
+                                    {% if version == '5.0' %}
+                                        <params>
+                                    {% else %}
+                                        <parameters><parameter>
+                                    {% endif %}
+                                        var exclusions = /{$REDIS_SERVER.EXCLUDED_STATS}/;
+
+                                        var stats = JSON.parse(value);
+
+                                        Object.keys(stats).forEach(function(key) {
+                                            var name = key.replace(/^[^.]*[.]/, '');
+                                            if (exclusions.test(name)) {
+                                                delete stats[key];
+                                            }
+                                        });
+
+                                        return JSON.stringify(stats);
+                                    {% if version == '5.0' %}
+                                        </params>
+                                    {% else %}
+                                        </parameter></parameters>
+                                    {% endif %}
+                                </step>
+                            </preprocessing>
                         {% endif %}
                     </item>
                 {% endfor %}
@@ -1124,9 +1165,11 @@
             <macros>
                 {% for macro in [
                         ('{$REDIS_SERVER.LOCATIONS}', ''),
+                        ('{$REDIS_SERVER.EXCLUDED_STATS}', '^(?!)'),
 
                         ('{$REDIS_SERVER.PROCESSES.MIN}', '1'),
 
+                        ('{$REDIS_SERVER.LLD_EXCLUDED_SUBJECTS}', '^(?!)'),
                         ('{$REDIS_SERVER.LLD_KEEP_LOST_RESOURCES_PERIOD}', '30d'),
                         ('{$REDIS_SERVER.LLD_UPDATE_INTERVAL}', '1h'),
 
