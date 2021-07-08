@@ -1,3 +1,6 @@
+- ? (?):
+    - Avoided JavaScript precision issues when filtering is not needed.
+
 - 6.0 (2021-07-07):
     - Added {$REDIS_SENTINEL.LLD_EXCLUDED_SUBJECTS} and {$REDIS_SERVER.LLD_EXCLUDED_SUBJECTS} for filtering LLD items based on {#SUBJECT}.
     - Added {$REDIS_SENTINEL.EXCLUDED_STATS} and {$REDIS_SERVER.EXCLUDED_STATS} for filtering entries in the master item.

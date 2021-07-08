@@ -251,18 +251,28 @@
                                     {% else %}
                                         <parameters><parameter>
                                     {% endif %}
-                                        var exclusions = /{$REDIS_SENTINEL.EXCLUDED_STATS}/;
+                                        var exclusions = '{$REDIS_SENTINEL.EXCLUDED_STATS}'.trim();
 
-                                        var stats = JSON.parse(value);
+                                        // This check is not just a simple optimization to avoid using never matching
+                                        // regexps like '^(?!)' when filtering is not needed. JavaScript based filtering
+                                        // effectively limits precision of numeric values and it could trigger rendering
+                                        // of values using scientific notation.
+                                        if (exclusions !== '') {
+                                            exclusions = new RegExp(exclusions);
 
-                                        Object.keys(stats).forEach(function(key) {
-                                            var name = key.replace(/^[^.]*[.]/, '');
-                                            if (exclusions.test(name)) {
-                                                delete stats[key];
-                                            }
-                                        });
+                                            var stats = JSON.parse(value);
 
-                                        return JSON.stringify(stats);
+                                            Object.keys(stats).forEach(function(key) {
+                                                var name = key.replace(/^[^.]*[.]/, '');
+                                                if (exclusions.test(name)) {
+                                                    delete stats[key];
+                                                }
+                                            });
+
+                                            return JSON.stringify(stats);
+                                        } else {
+                                            return value;
+                                        }
                                     {% if version == '5.0' %}
                                         </params>
                                     {% else %}
@@ -507,7 +517,7 @@
             <macros>
                 {% for macro in [
                         ('{$REDIS_SENTINEL.LOCATIONS}', ''),
-                        ('{$REDIS_SENTINEL.EXCLUDED_STATS}', '^(?!)'),
+                        ('{$REDIS_SENTINEL.EXCLUDED_STATS}', ''),
 
                         ('{$REDIS_SENTINEL.PROCESSES.MIN}', '1'),
 
