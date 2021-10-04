@@ -100,10 +100,14 @@
                                 <step>
                                     <type>{{ step.type }}</type>
                                     {% if version == '5.0' -%}
-                                        <params>{{ step.params|default('')|e }}</params>
+                                        {% for param in step.params|default([]) %}
+                                            <params>{{ param|e }}</params>
+                                        {% endfor %}
                                     {% else %}
                                         <parameters>
-                                            <parameter>{{ step.params|default('')|e }}</parameter>
+                                            {% for param in step.params|default([]) %}
+                                                <parameter>{{ param|e }}</parameter>
+                                            {% endfor %}
                                         </parameters>
                                     {% endif %}
                                     <error_handler>{{ step.error_handler|default('ORIGINAL_ERROR') }}</error_handler>
@@ -312,7 +316,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.sentinel:sentinel_masters\']',
+                                    'params': ['$[\'{#LOCATION_ID}.sentinel:sentinel_masters\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -327,7 +331,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.sentinel:sentinel_running_scripts\']',
+                                    'params': ['$[\'{#LOCATION_ID}.sentinel:sentinel_running_scripts\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -342,7 +346,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.sentinel:sentinel_scripts_queue_length\']',
+                                    'params': ['$[\'{#LOCATION_ID}.sentinel:sentinel_scripts_queue_length\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -358,7 +362,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.server:uptime_in_seconds\']',
+                                    'params': ['$[\'{#LOCATION_ID}.server:uptime_in_seconds\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -400,7 +404,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:ckquorum\']',
+                                    'params': ['$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:ckquorum\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                                 {
@@ -418,7 +422,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:sentinels\']',
+                                    'params': ['$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:sentinels\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -433,7 +437,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:slaves\']',
+                                    'params': ['$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:slaves\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -448,7 +452,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:status\']',
+                                    'params': ['$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:status\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
@@ -463,7 +467,7 @@
                             'preprocessing': [
                                 {
                                     'type': 'JSONPATH',
-                                    'params': '$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:usable_sentinels\']',
+                                    'params': ['$[\'{#LOCATION_ID}.masters:{#SUBJECT_ID}:usable_sentinels\']'],
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
