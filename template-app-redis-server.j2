@@ -100,9 +100,7 @@
                                 <step>
                                     <type>{{ step.type }}</type>
                                     {% if version == '5.0' -%}
-                                        {% for param in step.params|default([]) %}
-                                            <params>{{ param|e }}</params>
-                                        {% endfor %}
+                                        <params>{% for param in step.params|default([]) %}{% if loop.index > 1 %}{{ '\n' }}{% endif %}{{ param|e }}{% endfor %}</params>
                                     {% else %}
                                         <parameters>
                                             {% for param in step.params|default([]) %}
