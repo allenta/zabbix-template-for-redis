@@ -2,7 +2,7 @@
 
 '''
 :url: https://github.com/allenta/zabbix-template-for-redis
-:copyright: (c) 2015-2021 by Allenta Consulting S.L. <info@allenta.com>.
+:copyright: (c) 2015-2022 by Allenta Consulting S.L. <info@allenta.com>.
 :license: BSD, see LICENSE.txt for more details.
 '''
 
