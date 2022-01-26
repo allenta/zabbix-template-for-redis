@@ -1,3 +1,6 @@
+- ?:
+    - Added support for Zabbix 6.0.
+
 - 8.0 (2021-11-29):
     - Stopped assuming all preprocessing steps require a single parameter.
 
