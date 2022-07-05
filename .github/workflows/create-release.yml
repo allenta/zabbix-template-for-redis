@@ -41,6 +41,7 @@ jobs:
           - '5.2'
           - '5.4'
           - '6.0'
+          - '6.2'
         flavour:
           - name: Redis Server
             slug: redis-server

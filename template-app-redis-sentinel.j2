@@ -135,14 +135,24 @@
 <zabbix_export>
     <version>{{ version }}</version>
     <date>2018-10-30T08:22:30Z</date>
-    <groups>
-        <group>
-            {% if version not in ('5.0', '5.2') %}
-                <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
-            {% endif %}
-            <name>Templates</name>
-        </group>
-    </groups>
+    {% if version not in ('5.0', '5.2', '5.4', '6.0') %}
+        <template_groups>
+            <template_group>
+    {% else %}
+        <groups>
+            <group>
+    {% endif %}
+                {% if version not in ('5.0', '5.2') %}
+                    <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
+                {% endif %}
+                <name>Templates</name>
+    {% if version not in ('5.0', '5.2', '5.4', '6.0') %}
+            </template_group>
+        </template_groups>
+    {% else %}
+            </group>
+        </groups>
+    {% endif %}
     <templates>
         <template>
             {% if version not in ('5.0', '5.2') %}

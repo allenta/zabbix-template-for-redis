@@ -1,3 +1,6 @@
+- ?:
+    - Added support for Zabbix 6.2.
+
 - 9.0 (2022-01-26):
     - Added support for Zabbix 6.0.
 
