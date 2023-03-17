@@ -2,6 +2,8 @@
 
 {%- set description = description|default('') -%}
 
+{%- set release = release|default('trunk') -%}
+
 {%- set seed = ['Allenta', 'Redis Sentinel']|join('/') -%}
 
 {%- set master = 'redis_sentinel.stats["{$REDIS_SENTINEL.LOCATIONS}"]' -%}
@@ -134,7 +136,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>{{ version }}</version>
-    <date>2018-10-30T08:22:30Z</date>
+    {% if version in ('5.0', '5.2', '5.4', '6.0', '6.2') %}
+        <date>2018-10-30T08:22:30Z</date>
+    {% endif %}
     {% if version not in ('5.0', '5.2', '5.4', '6.0') %}
         <template_groups>
             <template_group>
@@ -162,6 +166,12 @@
             <name>Template App {{ name|e }}</name>
             {% if description %}
                 <description>{{ description|e }}</description>
+            {% endif %}
+            {% if version not in ('5.0', '5.2', '5.4', '6.0', '6.2') %}
+               <vendor>
+                    <name>Allenta Consulting S.L.</name>
+                    <version>{{ version }}-{{ release|e }}</version>
+                </vendor>
             {% endif %}
             <groups>
                 <group>
@@ -455,6 +465,7 @@
                             'name': 'masters:{#SUBJECT}:status',
                             'type': 'DEPENDENT',
                             'key': 'redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:status"]',
+                            'trends': false,
                             'value_type': 'TEXT',
                             'master_item_key': master,
                             'preprocessing': [

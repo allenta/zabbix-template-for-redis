@@ -42,6 +42,7 @@ jobs:
           - '5.4'
           - '6.0'
           - '6.2'
+          - '6.4'
         flavour:
           - name: Redis Server
             slug: redis-server
@@ -70,6 +71,7 @@ jobs:
             -D version=${{ matrix.version }} \
             -D name='${{ matrix.flavour.name }}' \
             -D description="Template App ${{ matrix.flavour.name }} $TAG_NAME" \
+            -D release="${TAG_NAME:1}" \
             --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-${{ matrix.flavour.slug }}.j2
 
       - name: Upload template

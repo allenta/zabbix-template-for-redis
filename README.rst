@@ -13,14 +13,16 @@
 
     $ pip install jinja2-cli
     $ PYTHONPATH=. jinja2 \
-        -D version={5.0,5.2,5.4,6.0,6.2} \
+        -D version={5.0,5.2,5.4,6.0,6.2,6.4} \
         [-D name='Redis Server'] \
         [-D description=''] \
+        [-D release='trunk'] \
         --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-redis-server.j2
     $ PYTHONPATH=. jinja2 \
-        -D version={5.0,5.2,5.4,6.0,6.2} \
+        -D version={5.0,5.2,5.4,6.0,6.2,6.4} \
         [-D name='Redis Sentinel'] \
         [-D description=''] \
+        [-D release='trunk'] \
         --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-redis-sentinel.j2
 
 4. Link hosts to the templates. Beware depending on the used template you must set a value for the ``{$REDIS_SERVER.LOCATIONS}`` or ``{$REDIS_SENTINEL.LOCATIONS}`` macro (comma-delimited list of Redis instances; ``port``, ``host:port`` and ``unix:///path/to/socket`` formats are allowed). Additional macros and contexts are available for further customizations.
