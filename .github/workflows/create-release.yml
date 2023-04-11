@@ -37,9 +37,6 @@ jobs:
     strategy:
       matrix:
         version:
-          - '5.0'
-          - '5.2'
-          - '5.4'
           - '6.0'
           - '6.2'
           - '6.4'

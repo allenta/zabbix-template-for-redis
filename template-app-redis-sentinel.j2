@@ -13,32 +13,25 @@
 {#-#########################################################################-#}
 
 {%- macro trigger(definition) -%}
-    {% if version not in ('5.0', '5.2') %}
-        <uuid>{{ [seed, definition.id]|join('/')|zuuid }}</uuid>
-    {% endif %}
+    <uuid>{{ [seed, definition.id]|join('/')|zuuid }}</uuid>
     <expression>{{ definition.expression|e }}</expression>
     <name>{{ definition.name|e }}</name>
     <priority>{{ definition.priority }}</priority>
-    {% if 'recovery' in definition %}
+    {%- if 'recovery' in definition %}
         <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
         <recovery_expression>{{ definition.recovery|e }}</recovery_expression>
-    {% else %}
-        <recovery_mode>EXPRESSION</recovery_mode>
-        <recovery_expression/>
-    {% endif %}
+    {%- endif %}
 {%- endmacro -%}
 
 {%- macro discovery_rule(rule, items, triggers) -%}
     <discovery_rule>
-        {% if version not in ('5.0', '5.2') %}
-            <uuid>{{ [seed, rule.id]|join('/')|zuuid }}</uuid>
-        {% endif %}
+        <uuid>{{ [seed, rule.id]|join('/')|zuuid }}</uuid>
         <name>{{ rule.name|e }}</name>
         <type>ZABBIX_ACTIVE</type>
         <key>{{ rule.key|e }}</key>
         <delay>{$REDIS_SENTINEL.LLD_UPDATE_INTERVAL:&quot;{{ rule.context }}&quot;}</delay>
         <lifetime>{$REDIS_SENTINEL.LLD_KEEP_LOST_RESOURCES_PERIOD:&quot;{{ rule.context }}&quot;}</lifetime>
-        {% if rule.context != 'items' %}
+        {%- if rule.context != 'items' %}
             <filter>
                 <conditions>
                     <condition>
@@ -49,82 +42,76 @@
                     </condition>
                 </conditions>
             </filter>
-        {% endif %}
+        {%- endif %}
         <item_prototypes>
-            {% for item in items %}
+            {%- for item in items %}
                 <item_prototype>
-                    {% if version not in ('5.0', '5.2') %}
-                        <uuid>{{ [seed, item.id]|join('/')|zuuid }}</uuid>
-                    {% endif %}
+                    <uuid>{{ [seed, item.id]|join('/')|zuuid }}</uuid>
                     <name>Redis Sentinel[{{ '{#' }}LOCATION}] - {{ item.name|e }}</name>
                     <type>{{ item.type }}</type>
                     <key>{{ item.key|e }}</key>
-                    {% if 'delay' in item and item.delay %}
+                    {%- if 'delay' in item and item.delay %}
                         <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</delay>
-                    {% else %}
+                    {%- else %}
                         <delay>0</delay>
-                    {% endif %}
-                    {% if 'history' in item and not item.history %}
+                    {%- endif %}
+                    {%- if 'history' in item and not item.history %}
                         <history>0</history>
-                    {% else %}
+                    {%- else %}
                         <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</history>
-                    {% endif %}
-                    {% if 'trends' in item and not item.trends %}
+                    {%- endif %}
+                    {%- if 'trends' in item and not item.trends %}
                         <trends>0</trends>
-                    {% else %}
+                    {%- else %}
                         <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
-                    {% endif %}
+                    {%- endif %}
                     <value_type>{{ item.value_type }}</value_type>
                     <units>{{ item.units|default('')|e }}</units>
                     <params>{{ item.params|default('')|e }}</params>
-                    {% if version in ('5.0', '5.2') %}
-                        <applications>
-                            <application>
-                                <name>Redis Sentinel</name>
-                            </application>
-                        </applications>
-                    {% else %}
-                        <tags>
-                            <tag>
-                                <tag>Application</tag>
-                                <value>Redis Sentinel</value>
-                            </tag>
-                        </tags>
-                    {% endif %}
-                    {% if 'master_item_key' in item %}
+                    {%- if 'preprocessing' in item %}
+                        <preprocessing>
+                            {%- for step in item.preprocessing %}
+                                <step>
+                                    <type>{{ step.type }}</type>
+                                    <parameters>
+                                        {%- for param in step.params|default([]) %}
+                                            <parameter>{{ param|e }}</parameter>
+                                        {%- endfor %}
+                                    </parameters>
+                                    <error_handler>{{ step.error_handler|default('ORIGINAL_ERROR') }}</error_handler>
+                                </step>
+                            {%- endfor %}
+                        </preprocessing>
+                    {%- endif %}
+                    {%- if 'master_item_key' in item %}
                         <master_item>
                             <key>{{ item.master_item_key|e }}</key>
                         </master_item>
-                    {% endif %}
-                    {% if 'preprocessing' in item %}
-                        <preprocessing>
-                            {% for step in item.preprocessing %}
-                                <step>
-                                    <type>{{ step.type }}</type>
-                                    {% if version == '5.0' -%}
-                                        <params>{% for param in step.params|default([]) %}{% if loop.index > 1 %}{{ '\n' }}{% endif %}{{ param|e }}{% endfor %}</params>
-                                    {% else %}
-                                        <parameters>
-                                            {% for param in step.params|default([]) %}
-                                                <parameter>{{ param|e }}</parameter>
-                                            {% endfor %}
-                                        </parameters>
-                                    {% endif %}
-                                    <error_handler>{{ step.error_handler|default('ORIGINAL_ERROR') }}</error_handler>
-                                    <error_handler_params/>
-                                </step>
-                            {% endfor %}
-                        </preprocessing>
-                    {% endif %}
+                    {%- endif %}
+                    <tags>
+                        <tag>
+                            <tag>Application</tag>
+                            <value>Redis Sentinel</value>
+                        </tag>
+                    </tags>
+                    {%- if 'triggers' in item %}
+                        <trigger_prototypes>
+                            {%- for definition in item.triggers %}
+                                <trigger_prototype>
+                                    {{ trigger(definition) }}
+                                </trigger_prototype>
+                            {%- endfor %}
+                        </trigger_prototypes>
+                    {%- endif %}
                 </item_prototype>
-            {% endfor %}
+            {%- endfor %}
         </item_prototypes>
         <trigger_prototypes>
-            {% for definition in triggers %}
+            {%- for definition in triggers %}
                 <trigger_prototype>
                     {{ trigger(definition) }}
                 </trigger_prototype>
-            {% endfor %}
+            {%- endfor %}
         </trigger_prototypes>
     </discovery_rule>
 {%- endmacro -%}
@@ -136,62 +123,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>{{ version }}</version>
-    {% if version in ('5.0', '5.2', '5.4', '6.0', '6.2') %}
+    {%- if version in ('6.0', '6.2') %}
         <date>2018-10-30T08:22:30Z</date>
-    {% endif %}
-    {% if version not in ('5.0', '5.2', '5.4', '6.0') %}
+    {%- endif %}
+    {%- if version != '6.0' %}
         <template_groups>
             <template_group>
-    {% else %}
+    {%- else %}
         <groups>
             <group>
-    {% endif %}
-                {% if version not in ('5.0', '5.2') %}
-                    <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
-                {% endif %}
+    {%- endif %}
+                <uuid>7df96b18c230490a9a0a9e2307226338</uuid>
                 <name>Templates</name>
-    {% if version not in ('5.0', '5.2', '5.4', '6.0') %}
+    {%- if version != '6.0' %}
             </template_group>
         </template_groups>
-    {% else %}
+    {%- else %}
             </group>
         </groups>
-    {% endif %}
+    {%- endif %}
     <templates>
         <template>
-            {% if version not in ('5.0', '5.2') %}
-                <uuid>{{ [seed]|join('/')|zuuid }}</uuid>
-            {% endif %}
+            <uuid>{{ [seed]|join('/')|zuuid }}</uuid>
             <template>Template App {{ name|e }}</template>
             <name>Template App {{ name|e }}</name>
-            {% if description %}
+            {%- if description %}
                 <description>{{ description|e }}</description>
-            {% endif %}
-            {% if version not in ('5.0', '5.2', '5.4', '6.0', '6.2') %}
-               <vendor>
+            {%- endif %}
+            {%- if version not in ('6.0', '6.2') %}
+                <vendor>
                     <name>Allenta Consulting S.L.</name>
                     <version>{{ version }}-{{ release|e }}</version>
                 </vendor>
-            {% endif %}
+            {%- endif %}
             <groups>
                 <group>
                     <name>Templates</name>
                 </group>
             </groups>
-            {% if version in ('5.0', '5.2') %}
-                <applications>
-                    <application>
-                        <name>Redis Sentinel</name>
-                    </application>
-                </applications>
-            {% endif %}
 
-            {#-#############################################################-#}
-            {#- ITEMS -#}
-            {#-#############################################################-#}
+            {#-##############################################################}
+            {#- ITEMS #}
+            {#-##############################################################}
 
             <items>
-                {% for item in [
+                {%- for item in [
                         {
                             'id': 'item-1',
                             'name': 'stats',
@@ -211,9 +187,6 @@
                                     'id': 'trigger-1.1',
                                     'name': 'Redis Sentinel is not running',
                                     'expression':
-                                        '{Template App ' + name + ':proc.num[redis-sentinel].last()}'
-                                        '<{$REDIS_SENTINEL.PROCESSES.MIN}'
-                                        if version in ('5.0', '5.2') else
                                         'last(/Template App ' + name + '/proc.num[redis-sentinel])'
                                         '<{$REDIS_SENTINEL.PROCESSES.MIN}',
                                     'priority': 'DISASTER',
@@ -222,99 +195,83 @@
                         },
                     ] %}
                     <item>
-                        {% if version not in ('5.0', '5.2') %}
-                            <uuid>{{ [seed, item.id]|join('/')|zuuid }}</uuid>
-                        {% endif %}
+                        <uuid>{{ [seed, item.id]|join('/')|zuuid }}</uuid>
                         <name>Redis Sentinel - {{ item.name|e }}</name>
                         <type>ZABBIX_ACTIVE</type>
                         <key>{{ item.key|e }}</key>
                         <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</delay>
-                        {% if 'history' in item and not item.history %}
+                        {%- if 'history' in item and not item.history %}
                             <history>0</history>
-                        {% else %}
+                        {%- else %}
                             <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</history>
-                        {% endif %}
-                        {% if 'trends' in item and not item.trends %}
+                        {%- endif %}
+                        {%- if 'trends' in item and not item.trends %}
                             <trends>0</trends>
-                        {% else %}
+                        {%- else %}
                             <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
-                        {% endif %}
+                        {%- endif %}
                         <value_type>{{ item.value_type }}</value_type>
                         <units>{{ item.units|default('')|e }}</units>
-                        {% if version in ('5.0', '5.2') %}
-                            <applications>
-                                <application>
-                                    <name>Redis Sentinel</name>
-                                </application>
-                            </applications>
-                        {% else %}
-                            <tags>
-                                <tag>
-                                    <tag>Application</tag>
-                                    <value>Redis Sentinel</value>
-                                </tag>
-                            </tags>
-                        {% endif %}
-                        {% if item.triggers %}
+                        <tags>
+                            <tag>
+                                <tag>Application</tag>
+                                <value>Redis Sentinel</value>
+                            </tag>
+                        </tags>
+                        {%- if item.triggers %}
                             <triggers>
-                                {% for definition in item.triggers %}
+                                {%- for definition in item.triggers %}
                                     <trigger>
                                         {{ trigger(definition) }}
                                     </trigger>
-                                {% endfor %}
+                                {%- endfor %}
                             </triggers>
-                        {% endif %}
-                        {% if item.name == 'stats' %}
+                        {%- endif %}
+                        {%- if item.name == 'stats' %}
                             <preprocessing>
                                 <step>
                                     <type>JAVASCRIPT</type>
-                                    {% if version == '5.0' %}
-                                        <params>
-                                    {% else %}
-                                        <parameters><parameter>
-                                    {% endif %}
-                                        var exclusions = '{$REDIS_SENTINEL.EXCLUDED_STATS}'.trim();
+                                    <parameters>
+                                        <parameter>
+                                            var exclusions = '{$REDIS_SENTINEL.EXCLUDED_STATS}'.trim();
 
-                                        // This check is not just a simple optimization to avoid using never matching
-                                        // regexps like '^(?!)' when filtering is not needed. JavaScript based filtering
-                                        // effectively limits precision of numeric values and it could trigger rendering
-                                        // of values using scientific notation.
-                                        if (exclusions !== '') {
-                                            exclusions = new RegExp(exclusions);
+                                            // This check is not just a simple optimization to avoid using never matching
+                                            // regexps like '^(?!)' when filtering is not needed. JavaScript based filtering
+                                            // effectively limits precision of numeric values and it could trigger rendering
+                                            // of values using scientific notation.
+                                            if (exclusions !== '') {
+                                                exclusions = new RegExp(exclusions);
 
-                                            var stats = JSON.parse(value);
+                                                var stats = JSON.parse(value);
 
-                                            Object.keys(stats).forEach(function(key) {
-                                                var name = key.replace(/^[^.]*[.]/, '');
-                                                if (exclusions.test(name)) {
-                                                    delete stats[key];
-                                                }
-                                            });
+                                                Object.keys(stats).forEach(function(key) {
+                                                    var name = key.replace(/^[^.]*[.]/, '');
+                                                    if (exclusions.test(name)) {
+                                                        delete stats[key];
+                                                    }
+                                                });
 
-                                            return JSON.stringify(stats);
-                                        } else {
-                                            return value;
-                                        }
-                                    {% if version == '5.0' %}
-                                        </params>
-                                    {% else %}
-                                        </parameter></parameters>
-                                    {% endif %}
+                                                return JSON.stringify(stats);
+                                            } else {
+                                                return value;
+                                            }
+                                        </parameter>
+                                    </parameters>
                                 </step>
                             </preprocessing>
-                        {% endif %}
+                        {%- endif %}
                     </item>
-                {% endfor %}
+                {%- endfor %}
             </items>
 
-            {#-#############################################################-#}
-            {#- DISCOVERY RULES -#}
-            {#-#############################################################-#}
+            {#-##############################################################}
+            {#- DISCOVERY RULES #}
+            {#-##############################################################}
 
             <discovery_rules>
-                {#-#########################################################-#}
-                {#- ITEMS DISCOVERY -#}
-                {#-#########################################################-#}
+                {#-##########################################################}
+                {#- ITEMS DISCOVERY #}
+                {#-##########################################################}
 
                 {{ discovery_rule(
                     {
@@ -384,25 +341,23 @@
                                     'error_handler': 'DISCARD_VALUE',
                                 },
                             ],
+                            'triggers': [
+                                {
+                                    'id': 'trigger-prototype-1.4.1',
+                                    'name': 'Redis Sentinel[{#LOCATION}] has been restarted',
+                                    'expression':
+                                        'last(/Template App ' + name + '/redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"])'
+                                        '<{$REDIS_SENTINEL.UPTIME.MIN:"{#LOCATION_ID}"}',
+                                    'priority': 'HIGH',
+                                },
+                            ],
                         },
                     ],
-                    [
-                        {
-                            'id': 'trigger-prototype-1.1',
-                            'name': 'Redis Sentinel[{#LOCATION}] has been restarted',
-                            'expression':
-                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"].last()}'
-                                '<{$REDIS_SENTINEL.UPTIME.MIN:"{#LOCATION_ID}"}'
-                                if version in ('5.0', '5.2') else
-                                'last(/Template App ' + name + '/redis_sentinel.info["{#LOCATION_ID}","server:uptime_in_seconds"])'
-                                '<{$REDIS_SENTINEL.UPTIME.MIN:"{#LOCATION_ID}"}',
-                            'priority': 'HIGH',
-                        },
-                    ]) }}
+                    []) }}
 
-                {#-#########################################################-#}
-                {#- MASTERS DISCOVERY -#}
-                {#-#########################################################-#}
+                {#-##########################################################}
+                {#- MASTERS DISCOVERY #}
+                {#-##########################################################}
 
                 {{ discovery_rule(
                     {
@@ -427,6 +382,17 @@
                                 },
                                 {
                                     'type': 'BOOL_TO_DECIMAL',
+                                },
+                            ],
+                            'triggers': [
+                                {
+                                    'id': 'trigger-prototype-2.1.1',
+                                    'name': 'Redis Sentinel[{#LOCATION}] {#SUBJECT} cannot reach quorum',
+                                    'expression':
+                                        '{$REDIS_SENTINEL.QUORUM.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
+                                        'last(/Template App ' + name + '/redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"])'
+                                        '<>1',
+                                    'priority': 'HIGH',
                                 },
                             ],
                         },
@@ -495,25 +461,8 @@
                     [
                         {
                             'id': 'trigger-prototype-2.1',
-                            'name': 'Redis Sentinel[{#LOCATION}] {#SUBJECT} cannot reach quorum',
-                            'expression':
-                                '{$REDIS_SENTINEL.QUORUM.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
-                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"].last()}'
-                                '<>1'
-                                if version in ('5.0', '5.2') else
-                                '{$REDIS_SENTINEL.QUORUM.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
-                                'last(/Template App ' + name + '/redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:ckquorum"])'
-                                '<>1',
-                            'priority': 'HIGH',
-                        },
-                        {
-                            'id': 'trigger-prototype-2.2',
                             'name': 'Redis Sentinel[{#LOCATION}] {#SUBJECT} is not able to use all sentinels',
                             'expression':
-                                '{$REDIS_SENTINEL.USABLE_SENTINELS.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
-                                '{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"].last()}'
-                                '<>{Template App ' + name + ':redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"].last()}'
-                                if version in ('5.0', '5.2') else
                                 '{$REDIS_SENTINEL.USABLE_SENTINELS.ENABLED:"{#LOCATION_ID}:{#SUBJECT_ID}"} and '
                                 'last(/Template App ' + name + '/redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:sentinels"])'
                                 '<>last(/Template App ' + name + '/redis_sentinel.info["{#LOCATION_ID}","masters:{#SUBJECT_ID}:usable_sentinels"])',
@@ -522,9 +471,9 @@
                     ]) }}
             </discovery_rules>
 
-            {#-#############################################################-#}
-            {#- TAGS -#}
-            {#-#############################################################-#}
+            {#-##############################################################}
+            {#- TAGS #}
+            {#-##############################################################}
 
             <tags>
                 <tag>
@@ -533,12 +482,12 @@
                 </tag>
             </tags>
 
-            {#-#############################################################-#}
-            {#- MACROS -#}
-            {#-#############################################################-#}
+            {#-##############################################################}
+            {#- MACROS #}
+            {#-##############################################################}
 
             <macros>
-                {% for macro in [
+                {%- for macro in [
                         ('{$REDIS_SENTINEL.LOCATIONS}', ''),
                         ('{$REDIS_SENTINEL.EXCLUDED_STATS}', ''),
 
@@ -561,7 +510,7 @@
                         <macro>{{ macro[0]|e }}</macro>
                         <value>{{ macro[1]|e }}</value>
                     </macro>
-                {% endfor %}
+                {%- endfor %}
             </macros>
         </template>
     </templates>
