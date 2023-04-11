@@ -9,7 +9,7 @@ jobs:
   create_release:
     name: Create release
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     outputs:
       release_id: ${{ steps.create_release.outputs.id }}
@@ -30,7 +30,7 @@ jobs:
   upload_assets:
     name: Upload assets
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     needs: create_release
 
@@ -84,7 +84,7 @@ jobs:
   publish_release:
     name: Publish release
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     needs:
       - create_release
