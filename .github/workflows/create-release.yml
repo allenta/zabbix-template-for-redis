@@ -11,21 +11,13 @@ jobs:
 
     runs-on: ubuntu-22.04
 
-    outputs:
-      release_id: ${{ steps.create_release.outputs.id }}
-      release_upload_url: ${{ steps.create_release.outputs.upload_url }}
-
     steps:
+      - uses: actions/checkout@v3
+
       - name: Create draft
-        id: create_release
-        uses: actions/create-release@v1
+        run: gh release create $GITHUB_REF_NAME --draft=true --title $GITHUB_REF_NAME zabbix-redis.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: true
-          prerelease: false
 
   upload_assets:
     name: Upload assets
@@ -47,10 +39,10 @@ jobs:
             slug: redis-sentinel
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
 
@@ -59,27 +51,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install jinja2-cli
 
-      - name: Extract tag name
-        run: echo "TAG_NAME=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+      - name: Build template file name
+        run: |
+          echo "TEMPLATE_FILE_NAME=template-app-${{ matrix.flavour.slug }}-${{ matrix.version }}-$GITHUB_REF_NAME.xml" >> $GITHUB_ENV
 
       - name: Generate template
         run: |
           PYTHONPATH=. jinja2 \
             -D version=${{ matrix.version }} \
             -D name='${{ matrix.flavour.name }}' \
-            -D description="Template App ${{ matrix.flavour.name }} $TAG_NAME" \
-            -D release="${TAG_NAME:1}" \
-            --extension=extensions.zabbix.ZabbixExtension --strict -o template.xml template-app-${{ matrix.flavour.slug }}.j2
+            -D description="Template App ${{ matrix.flavour.name }} $GITHUB_REF_NAME" \
+            -D release="${GITHUB_REF_NAME:1}" \
+            --extension=extensions.zabbix.ZabbixExtension --strict -o $TEMPLATE_FILE_NAME template-app-${{ matrix.flavour.slug }}.j2
 
       - name: Upload template
-        uses: actions/upload-release-asset@v1
+        run: gh release upload $GITHUB_REF_NAME $TEMPLATE_FILE_NAME
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ needs.create_release.outputs.release_upload_url }}
-          asset_path: ./template.xml
-          asset_name: template-app-${{ matrix.flavour.slug }}-${{ matrix.version }}-${{ env.TAG_NAME }}.xml
-          asset_content_type: application/xml
 
   publish_release:
     name: Publish release
@@ -91,14 +79,9 @@ jobs:
       - upload_assets
 
     steps:
+      - uses: actions/checkout@v3
+
       - name: Publish release
-        uses: actions/github-script@0.9.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            github.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: '${{ needs.create_release.outputs.release_id }}',
-              draft: false
-            })
+        run: gh release edit $GITHUB_REF_NAME --draft=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
