@@ -1,5 +1,8 @@
 - ?:
     - Updated script shebang to python3.
+    - Added support for Zabbix 7.0. New 'Disable lost resources' property for
+      discovery rules will adopt the default value 'Immediately' instead of
+      trying to preserve the 6.x behaviour ('Never').
 
 - 13.0 (2023-05-05):
     - Resolve warnings on Github Actions workflow and include script on releases.

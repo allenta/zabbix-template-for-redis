@@ -13,7 +13,7 @@
 
     $ pip install jinja2-cli
     $ PYTHONPATH=. jinja2 \
-        -D version={6.0,6.2,6.4} \
+        -D version={6.0,6.2,6.4,7.0} \
         [-D name='Redis Server'] \
         [-D description=''] \
         [-D release='trunk'] \
