@@ -1,3 +1,6 @@
+- ?:
+    - Added support for Zabbix 7.2.
+
 - 14.0 (2024-05-31):
     - Updated script shebang to python3.
     - Added support for Zabbix 7.0. New 'Disable lost resources' property for

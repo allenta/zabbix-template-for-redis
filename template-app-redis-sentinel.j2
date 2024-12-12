@@ -35,7 +35,9 @@
             <filter>
                 <conditions>
                     <condition>
-                        <formulaid>A</formulaid>
+                        {%- if version in ('6.0', '6.2', '6.4', '7.0') %}
+                            <formulaid>A</formulaid>
+                        {%- endif %}
                         <macro>{{ '{#' }}SUBJECT}</macro>
                         <operator>NOT_MATCHES_REGEX</operator>
                         <value>{$REDIS_SENTINEL.LLD_EXCLUDED_SUBJECTS:&quot;{{ rule.context }}&quot;}</value>
@@ -52,7 +54,7 @@
                     <key>{{ item.key|e }}</key>
                     {%- if 'delay' in item and item.delay %}
                         <delay>{$REDIS_SENTINEL.ITEM_UPDATE_INTERVAL}</delay>
-                    {%- else %}
+                    {%- elif version in ('6.0', '6.2', '6.4', '7.0') %}
                         <delay>0</delay>
                     {%- endif %}
                     {%- if 'history' in item and not item.history %}
@@ -61,7 +63,9 @@
                         <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</history>
                     {%- endif %}
                     {%- if 'trends' in item and not item.trends %}
-                        <trends>0</trends>
+                        {%- if version in ('6.0', '6.2', '6.4', '7.0') %}
+                            <trends>0</trends>
+                        {%- endif %}
                     {%- else %}
                         <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                     {%- endif %}
@@ -206,7 +210,9 @@
                             <history>{$REDIS_SENTINEL.ITEM_HISTORY_STORAGE_PERIOD}</history>
                         {%- endif %}
                         {%- if 'trends' in item and not item.trends %}
-                            <trends>0</trends>
+                            {%- if version in ('6.0', '6.2', '6.4', '7.0') %}
+                                <trends>0</trends>
+                            {%- endif %}
                         {%- else %}
                             <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                         {%- endif %}
