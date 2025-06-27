@@ -69,7 +69,9 @@
                     {%- else %}
                         <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                     {%- endif %}
-                    <value_type>{{ item.value_type }}</value_type>
+                    {%- if item.value_type != 'UNSIGNED' or version in ('6.0', '6.2', '6.4', '7.0', '7.2') %}
+                        <value_type>{{ item.value_type }}</value_type>
+                    {%- endif %}
                     <units>{{ item.units|default('')|e }}</units>
                     <params>{{ item.params|default('')|e }}</params>
                     {%- if 'preprocessing' in item %}
@@ -82,7 +84,9 @@
                                             <parameter>{{ param|e }}</parameter>
                                         {%- endfor %}
                                     </parameters>
-                                    <error_handler>{{ step.error_handler|default('ORIGINAL_ERROR') }}</error_handler>
+                                    {%- if 'error_handler' in step or version in ('6.0', '6.2', '6.4', '7.0', '7.2') %}
+                                        <error_handler>{{ step.error_handler|default('ORIGINAL_ERROR') }}</error_handler>
+                                    {%- endif %}
                                 </step>
                             {%- endfor %}
                         </preprocessing>
@@ -216,7 +220,9 @@
                         {%- else %}
                             <trends>{$REDIS_SENTINEL.ITEM_TREND_STORAGE_PERIOD}</trends>
                         {%- endif %}
-                        <value_type>{{ item.value_type }}</value_type>
+                        {%- if item.value_type != 'UNSIGNED' or version in ('6.0', '6.2', '6.4', '7.0', '7.2') %}
+                            <value_type>{{ item.value_type }}</value_type>
+                        {%- endif %}
                         <units>{{ item.units|default('')|e }}</units>
                         <tags>
                             <tag>

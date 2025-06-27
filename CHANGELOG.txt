@@ -1,3 +1,6 @@
+- ?:
+    - Added support for Zabbix 7.4.
+
 - 15.0 (2024-12-12):
     - Added support for Zabbix 7.2.
 
