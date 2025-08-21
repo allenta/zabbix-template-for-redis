@@ -9,10 +9,10 @@ jobs:
   create_release:
     name: Create release
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Create draft
         run: gh release create $GITHUB_REF_NAME --draft=true --title $GITHUB_REF_NAME zabbix-redis.py
@@ -22,7 +22,7 @@ jobs:
   upload_assets:
     name: Upload assets
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     needs: create_release
 
@@ -42,12 +42,12 @@ jobs:
             slug: redis-sentinel
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: 3.12
 
       - name: Install dependencies
         run: |
@@ -75,14 +75,14 @@ jobs:
   publish_release:
     name: Publish release
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     needs:
       - create_release
       - upload_assets
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Publish release
         run: gh release edit $GITHUB_REF_NAME --draft=false
